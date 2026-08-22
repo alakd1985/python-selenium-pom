@@ -6,7 +6,7 @@ from utilities.soft_assert import SoftAssert
 class TestLogin:
 
     def setup_method(self):
-        self.soft = SoftAssert()
+        self.soft = SoftAssert(self.driver)
 
     def teardown_method(self):
         # Ensure soft assertions run but do NOT block fixture teardown

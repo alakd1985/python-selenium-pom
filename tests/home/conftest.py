@@ -1,5 +1,6 @@
 import pytest
 from base.webdriver_factory import WebDriverFactory
+from utilities.screenshot import take_screenshot
 
 
 # ---------------------------------------------------------
@@ -54,3 +55,17 @@ def driver(request, browser, base_url):
         driver.quit()
     except Exception as e:
         print(f"[WARN] WebDriver quit failed: {e}")
+
+    # ---------------------------------------------------------
+    # 📸 Screenshot on Test Failure (ADD THIS AT THE BOTTOM)
+    # ---------------------------------------------------------
+    @pytest.hookimpl(hookwrapper=True)
+    def pytest_runtest_makereport(item, call):
+        outcome = yield
+        report = outcome.get_result()
+
+        if report.when == "call" and report.failed:
+            driver = item.funcargs.get("driver")
+            if driver:
+                path = take_screenshot(driver, item.name)
+                print(f"[TEST FAILURE] Screenshot saved: {path}")
