@@ -1,0 +1,32 @@
+[31m[1mERROR   [0m LoginPage:base_page.py:77 Element NOT present: //input[@placeholder='Username'] (xpath) - Message: 
+Stacktrace:
+RemoteError@chrome://remote/content/shared/RemoteError.sys.mjs:8:8
+WebDriverError@chrome://remote/content/shared/webdriver/Errors.sys.mjs:169:5
+NoSuchElementError@chrome://remote/content/shared/webdriver/Errors.sys.mjs:538:5
+dom.find/</<@chrome://remote/content/shared/DOM.sys.mjs:137:16
+
+[32mINFO    [0m LoginPage:login_page.py:44 Entering username: Admin1
+[31m[1mERROR   [0m LoginPage:base_page.py:77 Element NOT present: //input[@placeholder='Username'] (xpath) - Message: 
+Stacktrace:
+RemoteError@chrome://remote/content/shared/RemoteError.sys.mjs:8:8
+WebDriverError@chrome://remote/content/shared/webdriver/Errors.sys.mjs:169:5
+NoSuchElementError@chrome://remote/content/shared/webdriver/Errors.sys.mjs:538:5
+dom.find/</<@chrome://remote/content/shared/DOM.sys.mjs:137:16
+
+[32mINFO    [0m LoginPage:login_page.py:55 Entering password.
+[31m[1mERROR   [0m LoginPage:base_page.py:77 Element NOT present: //input[@placeholder='Password'] (xpath) - Message: 
+Stacktrace:
+RemoteError@chrome://remote/content/shared/RemoteError.sys.mjs:8:8
+WebDriverError@chrome://remote/content/shared/webdriver/Errors.sys.mjs:169:5
+NoSuchElementError@chrome://remote/content/shared/webdriver/Errors.sys.mjs:538:5
+dom.find/</<@chrome://remote/content/shared/DOM.sys.mjs:137:16
+
+[32mINFO    [0m LoginPage:login_page.py:66 Clicking login button.
+[32mINFO    [0m LoginPage:base_page.py:70 Element present: //button[@type='submit'] (xpath)
+[32mINFO    [0m LoginPage:base_page.py:120 Clicked element: //button[@type='submit'] (xpath)
+[31m[1mERROR   [0m LoginPage:base_page.py:77 Element NOT present: //p[@class='oxd-text oxd-text--p oxd-alert-content-text'] (xpath) - Message: 
+Stacktrace:
+RemoteError@chrome://remote/content/shared/RemoteError.sys.mjs:8:8
+WebDriverError@chrome://remote/content/shared/webdriver/Errors.sys.mjs:169:5
+NoSuchElementError@chrome://remote/content/shared/webdriver/Errors.sys.mjs:538:5
+dom.find/</<@chrome://remote/content/shared/DOM.sys.mjs:137:16
