@@ -10,9 +10,9 @@ class LoginPage(BasePage):
     def __init__(self, driver):
         super().__init__(driver)
 
-    # ---------------------------------------------------------
+    # =========================================================
     # Locators
-    # ---------------------------------------------------------
+    # =========================================================
 
     _username_field = "//input[@placeholder='Username']"
     _password_field = "//input[@placeholder='Password']"
@@ -36,19 +36,19 @@ class LoginPage(BasePage):
         "//div[1]//div[1]//span[1]"
     )
 
-    # ---------------------------------------------------------
+    # =========================================================
     # Actions
-    # ---------------------------------------------------------
+    # =========================================================
 
     def enter_username(self, username):
         self.log.info(
             f"Entering username: {username}"
         )
 
-        self.sendKeys(
-            username,
-            self._username_field,
-            "xpath"
+        return self.send_keys(
+            text=username,
+            locator=self._username_field,
+            locator_type="xpath"
         )
 
     def enter_password(self, password):
@@ -56,10 +56,10 @@ class LoginPage(BasePage):
             "Entering password."
         )
 
-        self.sendKeys(
-            password,
-            self._password_field,
-            "xpath"
+        return self.send_keys(
+            text=password,
+            locator=self._password_field,
+            locator_type="xpath"
         )
 
     def click_login_button(self):
@@ -67,25 +67,25 @@ class LoginPage(BasePage):
             "Clicking login button."
         )
 
-        self.elementClick(
-            self._login_button,
-            "xpath"
+        return self.click(
+            locator=self._login_button,
+            locator_type="xpath"
         )
 
     def login(self, username, password):
 
-        self.waitForElement(
-            self._username_field,
-            "xpath"
+        self.wait_for_element_visible(
+            locator=self._username_field,
+            locator_type="xpath"
         )
 
         self.enter_username(username)
         self.enter_password(password)
         self.click_login_button()
 
-    # ---------------------------------------------------------
+    # =========================================================
     # Verifications
-    # ---------------------------------------------------------
+    # =========================================================
 
     def verify_login_successful(self):
 
@@ -93,23 +93,23 @@ class LoginPage(BasePage):
             "Verifying login success."
         )
 
-        return self.verifyElementPresent(
-            self._dashboard_text,
-            "xpath"
+        return self.is_element_visible(
+            locator=self._dashboard_text,
+            locator_type="xpath"
         )
 
     def verify_invalid_credentials(self):
 
-        return self.verifyElementPresent(
-            self._invalid_credentials,
-            "xpath",
-            timeout=5
+        return self.is_element_visible(
+            locator=self._invalid_credentials,
+            locator_type="xpath",
+            # timeout=5
         )
 
     def verify_required_field_message(self):
 
-        return self.verifyElementPresent(
-            self._required_field,
-            "xpath",
-            timeout=5
+        return self.is_element_visible(
+            locator=self._required_field,
+            locator_type="xpath",
+            # timeout=5
         )
