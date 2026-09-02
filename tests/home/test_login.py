@@ -2,6 +2,13 @@ import pytest
 import allure
 from pages.home.login_page import LoginPage
 from utilities.soft_assert import SoftAssert
+from configuration.config import (VALID_USERNAME,
+    VALID_PASSWORD,
+    VALID_USERNAME_INVALID_PASSWORD,
+    INVALID_USERNAME_VALID_PASSWORD,
+    INVALID_USERNAME_INVALID_PASSWORD,
+    EMPTY_CREDENTIALS)
+
 
 
 @pytest.mark.usefixtures("driver")
@@ -23,7 +30,7 @@ class TestLogin:
         lp = LoginPage(self.driver)
 
         with allure.step("Logging in with valid credentials"):
-            lp.login("Admin", "admin123")
+            lp.login(VALID_USERNAME, VALID_PASSWORD)
 
         self.soft.verify(
             lp.verify_login_successful(),
@@ -44,7 +51,10 @@ class TestLogin:
         lp = LoginPage(self.driver)
 
         with allure.step("Attempt login with wrong username"):
-            lp.login("Admin1", "admin123")
+            lp.login(
+                INVALID_USERNAME_VALID_PASSWORD["username"],
+                INVALID_USERNAME_VALID_PASSWORD["password"]
+            )
 
         self.soft.verify(
             lp.verify_invalid_credentials(),
@@ -64,7 +74,10 @@ class TestLogin:
         lp = LoginPage(self.driver)
 
         with allure.step("Attempt login with wrong password"):
-            lp.login("Admin", "admin1234")
+            lp.login(
+                VALID_USERNAME_INVALID_PASSWORD["username"],
+                VALID_USERNAME_INVALID_PASSWORD["password"]
+            )
 
         self.soft.verify(
             lp.verify_invalid_credentials(),
@@ -84,7 +97,10 @@ class TestLogin:
         lp = LoginPage(self.driver)
 
         with allure.step("Attempt login with both wrong username and password"):
-            lp.login("Admin1", "admin1234")
+            lp.login(
+                INVALID_USERNAME_INVALID_PASSWORD["username"],
+                INVALID_USERNAME_INVALID_PASSWORD["password"]
+            )
 
         self.soft.verify(
             lp.verify_invalid_credentials(),
