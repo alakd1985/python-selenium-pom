@@ -1,0 +1,4 @@
+[32mINFO    [0m LoginPage:login_page.py:66 Clicking login button.
+[32mINFO    [0m LoginPage:base_page.py:70 Element present: //button[@type='submit'] (xpath)
+[32mINFO    [0m LoginPage:base_page.py:120 Clicked element: //button[@type='submit'] (xpath)
+[32mINFO    [0m LoginPage:base_page.py:70 Element present: //div[@class='orangehrm-login-slot-wrapper']//div[1]//div[1]//span[1] (xpath)
