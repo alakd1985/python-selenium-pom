@@ -1,0 +1,10 @@
+{
+  "smoke_employee": {
+    "first_name": "John",
+    "last_name": "Doe"
+  },
+  "regression_employee": {
+    "first_name": "Jane",
+    "last_name": "Smith"
+  }
+}

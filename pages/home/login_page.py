@@ -1,115 +1,35 @@
 from base.base_page import BasePage
-import utilities.custom_logger as cl
-import logging
 
 
 class LoginPage(BasePage):
-
-    log = cl.customLogger(logging.DEBUG)
-
-    def __init__(self, driver):
-        super().__init__(driver)
-
-    # =========================================================
-    # Locators
-    # =========================================================
-
-    _username_field = "//input[@placeholder='Username']"
-    _password_field = "//input[@placeholder='Password']"
+    _username_field = "//input[@name='username']"
+    _password_field = "//input[@name='password']"
     _login_button = "//button[@type='submit']"
+    _dashboard_header = "//h6[normalize-space()='Dashboard']"
+    _invalid_credentials = "//p[contains(@class,'oxd-alert-content-text')]"
+    _required_field = "//span[normalize-space()='Required']"
 
-    _dashboard_text = (
-        "//span[@class='oxd-text "
-        "oxd-text--span "
-        "oxd-main-menu-item--name']"
-        "[normalize-space()='Dashboard']"
-    )
+    def enter_username(self, username: str) -> bool:
+        return self.send_keys(text=username, locator=self._username_field)
 
-    _invalid_credentials = (
-        "//p[@class='oxd-text "
-        "oxd-text--p "
-        "oxd-alert-content-text']"
-    )
+    def enter_password(self, password: str) -> bool:
+        return self.send_keys(text=password, locator=self._password_field)
 
-    _required_field = (
-        "//div[@class='orangehrm-login-slot-wrapper']"
-        "//div[1]//div[1]//span[1]"
-    )
+    def click_login_button(self) -> bool:
+        return self.click(locator=self._login_button)
 
-    # =========================================================
-    # Actions
-    # =========================================================
-
-    def enter_username(self, username):
-        self.log.info(
-            f"Entering username: {username}"
+    def login(self, username: str, password: str) -> bool:
+        return (
+            self.enter_username(username)
+            and self.enter_password(password)
+            and self.click_login_button()
         )
 
-        return self.send_keys(
-            text=username,
-            locator=self._username_field,
-            locator_type="xpath"
-        )
+    def verify_login_successful(self) -> bool:
+        return self.is_element_visible(locator=self._dashboard_header)
 
-    def enter_password(self, password):
-        self.log.info(
-            "Entering password."
-        )
+    def verify_invalid_credentials(self) -> bool:
+        return self.is_element_visible(locator=self._invalid_credentials)
 
-        return self.send_keys(
-            text=password,
-            locator=self._password_field,
-            locator_type="xpath"
-        )
-
-    def click_login_button(self):
-        self.log.info(
-            "Clicking login button."
-        )
-
-        return self.click(
-            locator=self._login_button,
-            locator_type="xpath"
-        )
-
-    def login(self, username, password):
-
-        self.wait_for_element_visible(
-            locator=self._username_field,
-            locator_type="xpath"
-        )
-
-        self.enter_username(username)
-        self.enter_password(password)
-        self.click_login_button()
-
-    # =========================================================
-    # Verifications
-    # =========================================================
-
-    def verify_login_successful(self):
-
-        self.log.info(
-            "Verifying login success."
-        )
-
-        return self.is_element_visible(
-            locator=self._dashboard_text,
-            locator_type="xpath"
-        )
-
-    def verify_invalid_credentials(self):
-
-        return self.is_element_visible(
-            locator=self._invalid_credentials,
-            locator_type="xpath",
-            # timeout=5
-        )
-
-    def verify_required_field_message(self):
-
-        return self.is_element_visible(
-            locator=self._required_field,
-            locator_type="xpath",
-            # timeout=5
-        )
+    def verify_required_field_message(self) -> bool:
+        return self.is_element_visible(locator=self._required_field)

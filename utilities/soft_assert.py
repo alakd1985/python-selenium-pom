@@ -1,19 +1,29 @@
-from utilities.screenshot import take_screenshot
+from __future__ import annotations
+
 
 class SoftAssert:
+    """Minimal soft-assert helper retained for legacy non-BDD tests."""
+
     def __init__(self, driver=None):
-        self._errors = []
         self.driver = driver
+        self._errors: list[str] = []
 
-    def verify(self, condition, message):
+    def assert_true(self, condition: bool, message: str = "") -> None:
         if not condition:
-            self._errors.append(message)
+            self._errors.append(message or "Expected condition to be True")
 
-            if self.driver:
-                path = take_screenshot(self.driver, "soft_assert_failure")
-                print(f"[SOFT ASSERT] Screenshot saved: {path}")
+    def assert_false(self, condition: bool, message: str = "") -> None:
+        if condition:
+            self._errors.append(message or "Expected condition to be False")
 
-    def assert_all(self):
+    def assert_equal(self, actual, expected, message: str = "") -> None:
+        if actual != expected:
+            self._errors.append(
+                message or f"Expected {expected!r}, got {actual!r}"
+            )
+
+    def assert_all(self) -> None:
         if self._errors:
-            errors = "\n".join(self._errors)
-            raise AssertionError(f"Soft assertion failures:\n{errors}")
+            error_message = "Soft assertion failures:\n- " + "\n- ".join(self._errors)
+            self._errors.clear()
+            raise AssertionError(error_message)

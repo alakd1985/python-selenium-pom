@@ -1,0 +1,32 @@
+{
+  "dev": {
+    "base_url": "https://opensource-demo.orangehrmlive.com/",
+    "browser": "firefox",
+    "timeout": 10,
+    "implicit_wait": 0,
+    "headless": false,
+    "os_type": "local",
+    "window_width": 1920,
+    "window_height": 1080
+  },
+  "qa": {
+    "base_url": "${QA_BASE_URL}",
+    "browser": "firefox",
+    "timeout": 15,
+    "implicit_wait": 0,
+    "headless": false,
+    "os_type": "local",
+    "window_width": 1920,
+    "window_height": 1080
+  },
+  "prod": {
+    "base_url": "${PROD_BASE_URL}",
+    "browser": "chrome",
+    "timeout": 15,
+    "implicit_wait": 0,
+    "headless": true,
+    "os_type": "local",
+    "window_width": 1920,
+    "window_height": 1080
+  }
+}

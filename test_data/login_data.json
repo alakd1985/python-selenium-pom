@@ -1,0 +1,6 @@
+{
+  "valid": {
+    "username": "${ORANGEHRM_USERNAME}",
+    "password": "${ORANGEHRM_PASSWORD}"
+  }
+}

@@ -1,12 +1,11 @@
 from __future__ import annotations
 
+import logging
 import time
 from pathlib import Path
-from typing import Optional, Sequence, Tuple, Union
+from typing import Optional, Tuple
 
 import utilities.custom_logger as cl
-import logging
-
 from selenium.common.exceptions import (
     ElementClickInterceptedException,
     ElementNotInteractableException,
@@ -15,69 +14,35 @@ from selenium.common.exceptions import (
     TimeoutException,
     WebDriverException,
 )
-
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 Locator = Tuple[str, str]
-ElementOrLocator = Union[WebElement, str]
 
 
 class BasePage:
-    """
-    Base Page Object for Selenium Page Objects.
-
-    Provides common, reusable browser and element operations.
-
-    Page classes such as LoginPage, DashboardPage, AdminPage, etc.
-    should inherit from this class.
-    """
+    """Reusable Selenium operations shared by all page objects."""
 
     log = cl.customLogger(logging.DEBUG)
-
     DEFAULT_TIMEOUT = 10
     DEFAULT_POLL_FREQUENCY = 0.5
 
     def __init__(
-            self,
-            driver,
-            timeout: int = DEFAULT_TIMEOUT,
-            poll_frequency: float = DEFAULT_POLL_FREQUENCY,
-    ):
+        self,
+        driver,
+        timeout: int = DEFAULT_TIMEOUT,
+        poll_frequency: float = DEFAULT_POLL_FREQUENCY,
+    ) -> None:
         if driver is None:
             raise ValueError("WebDriver instance cannot be None.")
-
         self.driver = driver
         self.timeout = timeout
         self.poll_frequency = poll_frequency
 
-    # =========================================================
-    # Locator Handling
-    # =========================================================
-
     @staticmethod
     def get_by_type(locator_type: str) -> str:
-        """
-        Convert framework locator type to Selenium By strategy.
-
-        Supported values:
-            id
-            name
-            xpath
-            css
-            class / classname
-            link / linktext
-            partial_link / partiallinktext
-            tag / tagname
-        """
-
-        if not locator_type:
-            raise ValueError("locator_type cannot be empty.")
-
-        locator_type = locator_type.strip().lower()
-
         locator_map = {
             "id": By.ID,
             "name": By.NAME,
@@ -92,691 +57,235 @@ class BasePage:
             "tag": By.TAG_NAME,
             "tagname": By.TAG_NAME,
         }
-
-        if locator_type not in locator_map:
+        key = (locator_type or "").strip().lower()
+        if key not in locator_map:
             raise ValueError(
-                f"Unsupported locator type: '{locator_type}'. "
-                f"Supported types: {', '.join(locator_map.keys())}"
+                f"Unsupported locator type '{locator_type}'. "
+                f"Supported: {', '.join(locator_map)}"
             )
+        return locator_map[key]
 
-        return locator_map[locator_type]
-
-    def build_locator(
-            self,
-            locator: str,
-            locator_type: str = "xpath",
-    ) -> Locator:
-        """
-        Build Selenium locator tuple.
-        """
-
+    def build_locator(self, locator: str, locator_type: str = "xpath") -> Locator:
         if not locator:
             raise ValueError("locator cannot be empty.")
+        return self.get_by_type(locator_type), locator
 
-        return (
-            self.get_by_type(locator_type),
-            locator,
-        )
-
-    # =========================================================
-    # WebDriver / Browser Operations
-    # =========================================================
-
-    def get_title(self) -> str:
-        """Return current browser title."""
-
-        return self.driver.title
-
-    def get_current_url(self) -> str:
-        """Return current browser URL."""
-
-        return self.driver.current_url
-
-    def refresh_page(self) -> None:
-        """Refresh the current page."""
-
-        self.driver.refresh()
-
-    def navigate_back(self) -> None:
-        """Navigate backward in browser history."""
-
-        self.driver.back()
-
-    def navigate_forward(self) -> None:
-        """Navigate forward in browser history."""
-
-        self.driver.forward()
-
-    # =========================================================
-    # Element Retrieval
-    # =========================================================
-
-    def get_element(
-            self,
-            locator: str,
-            locator_type: str = "xpath",
-            timeout: Optional[int] = None,
-    ) -> Optional[WebElement]:
-        """
-        Wait for and return an element.
-
-        Uses visibility by default because this is generally
-        more useful for page interactions than raw DOM presence.
-        """
-
-        timeout = timeout or self.timeout
-        by, value = self.build_locator(
-            locator,
-            locator_type,
-        )
-
-        try:
-            wait = WebDriverWait(
-                self.driver,
-                timeout,
-                poll_frequency=self.poll_frequency,
-                ignored_exceptions=(
-                    NoSuchElementException,
-                    StaleElementReferenceException,
-                ),
-            )
-
-            element = wait.until(
-                EC.visibility_of_element_located(
-                    (by, value)
-                )
-            )
-
-            self.log.debug(
-                f"Element found: {locator} ({locator_type})"
-            )
-
-            return element
-
-        except TimeoutException:
-            self.log.error(
-                f"Timeout waiting for element: "
-                f"{locator} ({locator_type})"
-            )
-            return None
-
-    def get_elements(
-            self,
-            locator: str,
-            locator_type: str = "xpath",
-    ) -> list[WebElement]:
-        """
-        Return all matching elements.
-
-        Returns an empty list if no elements are found.
-        """
-
-        by, value = self.build_locator(
-            locator,
-            locator_type,
-        )
-
-        try:
-            elements = self.driver.find_elements(
-                by,
-                value,
-            )
-
-            self.log.debug(
-                f"Found {len(elements)} element(s): "
-                f"{locator} ({locator_type})"
-            )
-
-            return elements
-
-        except WebDriverException as exc:
-            self.log.error(
-                f"Unable to find elements: "
-                f"{locator} ({locator_type}) - {exc}"
-            )
-            return []
-
-    # =========================================================
-    # Wait Operations
-    # =========================================================
+    def _wait(self, condition, timeout: Optional[int] = None):
+        return WebDriverWait(
+            self.driver,
+            timeout if timeout is not None else self.timeout,
+            poll_frequency=self.poll_frequency,
+            ignored_exceptions=(NoSuchElementException, StaleElementReferenceException),
+        ).until(condition)
 
     def wait_for_element_present(
-            self,
-            locator: str,
-            locator_type: str = "xpath",
-            timeout: Optional[int] = None,
+        self, locator: str, locator_type: str = "xpath", timeout: Optional[int] = None
     ) -> Optional[WebElement]:
-        """
-        Wait until the element exists in the DOM.
-        """
-
-        timeout = timeout or self.timeout
-        by, value = self.build_locator(
-            locator,
-            locator_type,
-        )
-
         try:
-            wait = WebDriverWait(
-                self.driver,
+            return self._wait(
+                EC.presence_of_element_located(self.build_locator(locator, locator_type)),
                 timeout,
-                poll_frequency=self.poll_frequency,
             )
-
-            return wait.until(
-                EC.presence_of_element_located(
-                    (by, value)
-                )
-            )
-
         except TimeoutException:
-            self.log.error(
-                f"Element not present after {timeout}s: "
-                f"{locator} ({locator_type})"
-            )
+            self.log.error("Element not present: %s (%s)", locator, locator_type)
             return None
 
     def wait_for_element_visible(
-            self,
-            locator: str,
-            locator_type: str = "xpath",
-            timeout: Optional[int] = None,
+        self, locator: str, locator_type: str = "xpath", timeout: Optional[int] = None
     ) -> Optional[WebElement]:
-        """
-        Wait until the element is visible.
-        """
-
-        timeout = timeout or self.timeout
-        by, value = self.build_locator(
-            locator,
-            locator_type,
-        )
-
         try:
-            wait = WebDriverWait(
-                self.driver,
+            return self._wait(
+                EC.visibility_of_element_located(self.build_locator(locator, locator_type)),
                 timeout,
-                poll_frequency=self.poll_frequency,
             )
-
-            return wait.until(
-                EC.visibility_of_element_located(
-                    (by, value)
-                )
-            )
-
         except TimeoutException:
-            self.log.error(
-                f"Element not visible after {timeout}s: "
-                f"{locator} ({locator_type})"
-            )
+            self.log.error("Element not visible: %s (%s)", locator, locator_type)
             return None
 
     def wait_for_element_clickable(
-            self,
-            locator: str,
-            locator_type: str = "xpath",
-            timeout: Optional[int] = None,
+        self, locator: str, locator_type: str = "xpath", timeout: Optional[int] = None
     ) -> Optional[WebElement]:
-        """
-        Wait until the element can be clicked.
-        """
-
-        timeout = timeout or self.timeout
-        by, value = self.build_locator(
-            locator,
-            locator_type,
-        )
-
         try:
-            wait = WebDriverWait(
-                self.driver,
+            return self._wait(
+                EC.element_to_be_clickable(self.build_locator(locator, locator_type)),
                 timeout,
-                poll_frequency=self.poll_frequency,
             )
-
-            return wait.until(
-                EC.element_to_be_clickable(
-                    (by, value)
-                )
-            )
-
         except TimeoutException:
-            self.log.error(
-                f"Element not clickable after {timeout}s: "
-                f"{locator} ({locator_type})"
-            )
+            self.log.error("Element not clickable: %s (%s)", locator, locator_type)
             return None
 
-    # =========================================================
-    # Element Actions
-    # =========================================================
+    def get_element(
+        self, locator: str, locator_type: str = "xpath", timeout: Optional[int] = None
+    ) -> Optional[WebElement]:
+        return self.wait_for_element_visible(locator, locator_type, timeout)
+
+    def get_elements(self, locator: str, locator_type: str = "xpath") -> list[WebElement]:
+        by, value = self.build_locator(locator, locator_type)
+        try:
+            return self.driver.find_elements(by, value)
+        except WebDriverException as exc:
+            self.log.error("Unable to find elements %s: %s", locator, exc)
+            return []
 
     def click(
-            self,
-            locator: Optional[str] = None,
-            locator_type: str = "xpath",
-            element: Optional[WebElement] = None,
-            timeout: Optional[int] = None,
+        self,
+        locator: Optional[str] = None,
+        locator_type: str = "xpath",
+        element: Optional[WebElement] = None,
+        timeout: Optional[int] = None,
     ) -> bool:
-        """
-        Click an element.
-
-        Can accept either:
-            1. locator + locator_type
-            2. an existing WebElement
-        """
-
         try:
-            target = element
-
-            if target is None:
-                if not locator:
-                    raise ValueError(
-                        "Either locator or element must be provided."
-                    )
-
-                target = self.wait_for_element_clickable(
-                    locator,
-                    locator_type,
-                    timeout,
-                )
-
+            target = element or self.wait_for_element_clickable(locator, locator_type, timeout)
             if target is None:
                 return False
-
             target.click()
-
-            self.log.info(
-                f"Clicked element: "
-                f"{locator or '<WebElement>'}"
-            )
-
             return True
-
         except (
-                ElementClickInterceptedException,
-                ElementNotInteractableException,
-                StaleElementReferenceException,
+            ElementClickInterceptedException,
+            ElementNotInteractableException,
+            StaleElementReferenceException,
+            WebDriverException,
         ) as exc:
-
-            self.log.error(
-                f"Unable to click element: "
-                f"{locator or '<WebElement>'} - {exc}"
-            )
-
+            self.log.error("Unable to click %s: %s", locator, exc)
             return False
 
     def send_keys(
-            self,
-            text: str,
-            locator: Optional[str] = None,
-            locator_type: str = "xpath",
-            element: Optional[WebElement] = None,
-            clear_first: bool = True,
-            timeout: Optional[int] = None,
+        self,
+        text: str,
+        locator: Optional[str] = None,
+        locator_type: str = "xpath",
+        element: Optional[WebElement] = None,
+        clear_first: bool = True,
+        timeout: Optional[int] = None,
     ) -> bool:
-        """
-        Enter text into an input element.
-
-        Can accept either:
-            1. locator + locator_type
-            2. an existing WebElement
-        """
-
         try:
-            target = element
-
-            if target is None:
-                if not locator:
-                    raise ValueError(
-                        "Either locator or element must be provided."
-                    )
-
-                target = self.wait_for_element_visible(
-                    locator,
-                    locator_type,
-                    timeout,
-                )
-
+            target = element or self.wait_for_element_visible(locator, locator_type, timeout)
             if target is None:
                 return False
-
             if clear_first:
                 target.clear()
-
-            target.send_keys(text)
-
-            self.log.info(
-                f"Entered text into: "
-                f"{locator or '<WebElement>'}"
-            )
-
+            target.send_keys(str(text))
             return True
-
         except (
-                ElementNotInteractableException,
-                StaleElementReferenceException,
+            ElementNotInteractableException,
+            StaleElementReferenceException,
+            WebDriverException,
         ) as exc:
-
-            self.log.error(
-                f"Unable to send keys to: "
-                f"{locator or '<WebElement>'} - {exc}"
-            )
-
+            self.log.error("Unable to enter text into %s: %s", locator, exc)
             return False
 
-    # =========================================================
-    # Text Operations
-    # =========================================================
+    def clear(self, locator: str, locator_type: str = "xpath") -> bool:
+        element = self.get_element(locator, locator_type)
+        if element is None:
+            return False
+        element.clear()
+        return True
 
     def get_text(
-            self,
-            locator: Optional[str] = None,
-            locator_type: str = "xpath",
-            element: Optional[WebElement] = None,
-            timeout: Optional[int] = None,
+        self,
+        locator: Optional[str] = None,
+        locator_type: str = "xpath",
+        element: Optional[WebElement] = None,
+        timeout: Optional[int] = None,
     ) -> Optional[str]:
-        """
-        Return visible element text.
-
-        Falls back to innerText when Selenium's .text is empty.
-        """
-
         try:
-            target = element
-
-            if target is None:
-                if not locator:
-                    raise ValueError(
-                        "Either locator or element must be provided."
-                    )
-
-                target = self.wait_for_element_visible(
-                    locator,
-                    locator_type,
-                    timeout,
-                )
-
+            target = element or self.get_element(locator, locator_type, timeout)
             if target is None:
                 return None
-
-            text = target.text.strip()
-
-            if not text:
-                text = (
-                        target.get_attribute("innerText") or ""
-                ).strip()
-
-            self.log.debug(
-                f"Element text: '{text}'"
-            )
-
-            return text
-
-        except (
-                StaleElementReferenceException,
-                WebDriverException,
-        ) as exc:
-
-            self.log.error(
-                f"Unable to get element text: "
-                f"{locator or '<WebElement>'} - {exc}"
-            )
-
+            value = (target.text or "").strip()
+            return value or (target.get_attribute("innerText") or "").strip()
+        except WebDriverException as exc:
+            self.log.error("Unable to get text from %s: %s", locator, exc)
             return None
 
-    # =========================================================
-    # Element Verification
-    # =========================================================
+    def get_attribute(
+        self, locator: str, attribute: str, locator_type: str = "xpath"
+    ) -> Optional[str]:
+        element = self.get_element(locator, locator_type)
+        return element.get_attribute(attribute) if element else None
 
     def is_element_present(
-            self,
-            locator: Optional[str] = None,
-            locator_type: str = "xpath",
-            element: Optional[WebElement] = None,
+        self,
+        locator: Optional[str] = None,
+        locator_type: str = "xpath",
+        element: Optional[WebElement] = None,
     ) -> bool:
-        """
-        Check whether an element exists in the DOM.
-
-        Does not require the element to be visible.
-        """
-
         try:
             if element is not None:
-                return element.is_enabled() or True
-
+                return True
             if not locator:
-                raise ValueError(
-                    "Either locator or element must be provided."
-                )
-
-            by, value = self.build_locator(
-                locator,
-                locator_type,
-            )
-
-            return len(
-                self.driver.find_elements(
-                    by,
-                    value,
-                )
-            ) > 0
-
-        except (
-                StaleElementReferenceException,
-                WebDriverException,
-        ):
-
-            return False
-
-    def is_element_visible(
-            self,
-            locator: Optional[str] = None,
-            locator_type: str = "xpath",
-            element: Optional[WebElement] = None,
-    ) -> bool:
-        """
-        Check whether an element exists and is visible.
-        """
-
-        try:
-            if element is not None:
-                return element.is_displayed()
-
-            if not locator:
-                raise ValueError(
-                    "Either locator or element must be provided."
-                )
-
-            by, value = self.build_locator(
-                locator,
-                locator_type,
-            )
-
-            elements = self.driver.find_elements(
-                by,
-                value,
-            )
-
-            return any(
-                current_element.is_displayed()
-                for current_element in elements
-            )
-
-        except (
-                StaleElementReferenceException,
-                WebDriverException,
-        ):
-
-            return False
-
-    def is_element_enabled(
-            self,
-            locator: str,
-            locator_type: str = "xpath",
-    ) -> bool:
-        """
-        Check whether an element is enabled.
-        """
-
-        try:
-            element = self.get_element(
-                locator,
-                locator_type,
-            )
-
-            return (
-                    element is not None
-                    and element.is_enabled()
-            )
-
+                raise ValueError("Either locator or element must be provided.")
+            by, value = self.build_locator(locator, locator_type)
+            return bool(self.driver.find_elements(by, value))
         except WebDriverException:
             return False
 
-    # =========================================================
-    # Element Presence Check
-    # =========================================================
-
-    def element_presence_check(
-            self,
-            locator: str,
-            locator_type: str = "xpath",
+    def is_element_visible(
+        self,
+        locator: Optional[str] = None,
+        locator_type: str = "xpath",
+        element: Optional[WebElement] = None,
     ) -> bool:
-        """
-        Explicit presence check without waiting.
-
-        Similar to SeleniumDriver.elementPresenceCheck().
-        """
-
-        return self.is_element_present(
-            locator,
-            locator_type,
-        )
-
-    # =========================================================
-    # Scrolling
-    # =========================================================
-
-    def scroll_to_element(
-            self,
-            locator: str,
-            locator_type: str = "xpath",
-            timeout: Optional[int] = None,
-    ) -> bool:
-        """
-        Scroll the page until an element is in view.
-        """
-
-        element = self.get_element(
-            locator,
-            locator_type,
-            timeout,
-        )
-
-        if element is None:
+        try:
+            if element is not None:
+                return element.is_displayed()
+            if not locator:
+                raise ValueError("Either locator or element must be provided.")
+            return any(e.is_displayed() for e in self.get_elements(locator, locator_type))
+        except WebDriverException:
             return False
 
+    def is_element_enabled(self, locator: str, locator_type: str = "xpath") -> bool:
+        element = self.get_element(locator, locator_type)
+        return bool(element and element.is_enabled())
+
+    def scroll_to_element(
+        self, locator: str, locator_type: str = "xpath", timeout: Optional[int] = None
+    ) -> bool:
+        element = self.get_element(locator, locator_type, timeout)
+        if element is None:
+            return False
         try:
             self.driver.execute_script(
-                "arguments[0].scrollIntoView("
-                "{block: 'center', inline: 'nearest'});",
+                "arguments[0].scrollIntoView({block: 'center', inline: 'nearest'});",
                 element,
             )
-
             return True
-
         except WebDriverException as exc:
-            self.log.error(
-                f"Unable to scroll to element: "
-                f"{locator} - {exc}"
-            )
+            self.log.error("Unable to scroll to %s: %s", locator, exc)
             return False
 
     def scroll(self, direction: str = "down", pixels: int = 1000) -> None:
-        """
-        Scroll page up or down.
-
-        Example:
-            scroll("down", 1000)
-            scroll("up", 500)
-        """
-
         direction = direction.lower()
-
         if direction not in {"up", "down"}:
-            raise ValueError(
-                "direction must be either 'up' or 'down'."
-            )
-
-        offset = pixels if direction == "down" else -pixels
-
+            raise ValueError("direction must be 'up' or 'down'.")
         self.driver.execute_script(
-            "window.scrollBy(0, arguments[0]);",
-            offset,
+            "window.scrollBy(0, arguments[0]);", pixels if direction == "down" else -pixels
         )
 
-    def scroll_to_top(self) -> None:
-        """Scroll to the top of the page."""
+    def refresh_page(self) -> None:
+        self.driver.refresh()
 
-        self.driver.execute_script(
-            "window.scrollTo(0, 0);"
-        )
+    def navigate_back(self) -> None:
+        self.driver.back()
 
-    def scroll_to_bottom(self) -> None:
-        """Scroll to the bottom of the page."""
+    def navigate_forward(self) -> None:
+        self.driver.forward()
 
-        self.driver.execute_script(
-            "window.scrollTo(0, document.body.scrollHeight);"
-        )
+    def get_title(self) -> str:
+        return self.driver.title
 
-    # =========================================================
-    # Screenshot
-    # =========================================================
+    def get_current_url(self) -> str:
+        return self.driver.current_url
 
-    def take_screenshot(
-            self,
-            name: str = "screenshot",
-            directory: str = "screenshots",
-    ) -> Optional[str]:
-        """
-        Capture a screenshot and return its file path.
-        """
-
+    def take_screenshot(self, name: str = "screenshot", directory: str = "screenshots") -> Optional[str]:
         try:
-            screenshot_dir = Path(directory)
-            screenshot_dir.mkdir(
-                parents=True,
-                exist_ok=True,
-            )
-
-            timestamp = int(time.time() * 1000)
-
-            safe_name = (
-                name.replace(" ", "_")
-                .replace("/", "_")
-                .replace("\\", "_")
-            )
-
-            file_path = (
-                    screenshot_dir
-                    / f"{safe_name}_{timestamp}.png"
-            )
-
-            self.driver.save_screenshot(
-                str(file_path)
-            )
-
-            self.log.info(
-                f"Screenshot saved: {file_path}"
-            )
-
-            return str(file_path)
-
+            folder = Path(directory)
+            folder.mkdir(parents=True, exist_ok=True)
+            safe_name = name.replace(" ", "_").replace("/", "_").replace("\\", "_")
+            path = folder / f"{safe_name}_{int(time.time() * 1000)}.png"
+            self.driver.save_screenshot(str(path))
+            return str(path)
         except WebDriverException as exc:
-
-            self.log.error(
-                f"Unable to take screenshot: {exc}"
-            )
-
+            self.log.error("Unable to take screenshot: %s", exc)
             return None
