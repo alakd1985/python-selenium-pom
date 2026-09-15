@@ -20,7 +20,13 @@ class PIMPage(BasePage):
 
     _save_button = "//button[@type='submit']"
 
-    _success_message = "//div[contains(., 'Successfully Saved')]"
+    # OrangeHRM form loading overlay
+    _form_loader = "//div[contains(@class,'oxd-form-loader')]"
+
+    # OrangeHRM toast notification
+    _success_message = (
+        "//div[contains(@class,'oxd-toast-content')]"
+    )
 
     # =========================================================
     # Navigation
@@ -33,7 +39,7 @@ class PIMPage(BasePage):
         )
 
     # =========================================================
-    # Actions
+    # Employee Actions
     # =========================================================
 
     def click_add_button(self) -> bool:
@@ -63,17 +69,36 @@ class PIMPage(BasePage):
         return first_name_entered and last_name_entered
 
     def save_employee(self) -> bool:
+
+        # Wait for OrangeHRM form loader to disappear
+        if not self.wait_for_element_invisible(
+            locator=self._form_loader,
+            locator_type="xpath",
+            timeout=15,
+        ):
+            self.log.error(
+                "Form loader did not disappear before clicking Save"
+            )
+            return False
+
+        # Click Save
         return self.click(
             locator=self._save_button,
             locator_type="xpath",
+            timeout=15,
         )
 
     # =========================================================
     # Verification
     # =========================================================
 
-    def wait_for_save_confirmation(self) -> bool:
-        return self.is_element_visible(
-            locator=self._success_message,
-            locator_type="xpath",
+    def verify_employee_saved(self) -> bool:
+
+        return (
+            self.wait_for_element_visible(
+                locator=self._success_message,
+                locator_type="xpath",
+                timeout=15,
+            )
+            is not None
         )

@@ -26,10 +26,31 @@ class LoginPage(BasePage):
         )
 
     def verify_login_successful(self) -> bool:
-        return self.is_element_visible(locator=self._dashboard_header)
+        return (
+                self.wait_for_element_visible(
+                    locator=self._dashboard_header,
+                    locator_type="xpath",
+                    timeout=15,
+                )
+                is not None
+        )
 
     def verify_invalid_credentials(self) -> bool:
-        return self.is_element_visible(locator=self._invalid_credentials)
+        return (
+                self.wait_for_element_visible(
+                    locator=self._invalid_credentials,
+                    locator_type="xpath",
+                    timeout=10,
+                )
+                is not None
+        )
 
     def verify_required_field_message(self) -> bool:
-        return self.is_element_visible(locator=self._required_field)
+        return (
+                self.wait_for_element_visible(
+                    locator=self._required_field,
+                    locator_type="xpath",
+                    timeout=10,
+                )
+                is not None
+        )

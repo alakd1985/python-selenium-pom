@@ -1,6 +1,7 @@
 from pytest_bdd import then, when, parsers
 
 from pages.pim.pim_page import PIMPage
+from utilities.test_data_utils import generate_unique_suffix
 
 
 @when("the user navigates to the PIM page")
@@ -26,7 +27,11 @@ def click_add_employee(driver):
         'the user enters employee data for "{employee_key}"'
     )
 )
-def enter_employee_data(driver, employee_key, data_reader):
+def enter_employee_data(
+    driver,
+    employee_key,
+    data_reader,
+):
     employee = data_reader.get_record(
         "employees.json",
         employee_key,
@@ -37,15 +42,21 @@ def enter_employee_data(driver, employee_key, data_reader):
         {"first_name", "last_name"},
     )
 
+    # Generate one unique suffix for this employee
+    unique_suffix = generate_unique_suffix()
+
+    first_name = f"{employee['first_name']}_{unique_suffix}"
+    last_name = f"{employee['last_name']}_{unique_suffix}"
+
     pim = PIMPage(driver)
 
     assert pim.enter_employee_details(
-        first_name=employee["first_name"],
-        last_name=employee["last_name"],
+        first_name=first_name,
+        last_name=last_name,
     ), "Unable to enter employee details"
 
 
-@when("the user enters employee details:")
+@when("the user enters employee details")
 def enter_employee_details_from_table(
     driver,
     datatable,
@@ -58,11 +69,17 @@ def enter_employee_details_from_table(
         {"first_name", "last_name"},
     )
 
+    # Generate one unique suffix for this employee
+    unique_suffix = generate_unique_suffix()
+
+    first_name = f"{employee['first_name']}_{unique_suffix}"
+    last_name = f"{employee['last_name']}_{unique_suffix}"
+
     pim = PIMPage(driver)
 
     assert pim.enter_employee_details(
-        first_name=employee["first_name"],
-        last_name=employee["last_name"],
+        first_name=first_name,
+        last_name=last_name,
     ), "Unable to enter employee details"
 
 
@@ -79,6 +96,6 @@ def save_employee(driver):
 def verify_employee_added(driver):
     pim = PIMPage(driver)
 
-    assert pim.wait_for_save_confirmation(), (
+    assert pim.verify_employee_saved(), (
         "Employee was not added successfully"
     )
