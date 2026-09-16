@@ -290,31 +290,33 @@ class BasePage:
             self.log.error("Unable to take screenshot: %s", exc)
             return None
 
-
     def wait_for_element_invisible(
-        self,
-        locator: str,
-        locator_type: str = "xpath",
-        timeout: Optional[int] = None,
+            self,
+            locator: str,
+            locator_type: str = "xpath",
+            timeout: Optional[int] = None,
     ) -> bool:
-     try:
-        return WebDriverWait(
-            self.driver,
-            timeout if timeout is not None else self.timeout,
-            poll_frequency=self.poll_frequency,
-            ignored_exceptions=(
-                NoSuchElementException,
-                StaleElementReferenceException,
-            ),
-        ).until(
-            EC.invisibility_of_element_located(
-                self.build_locator(locator, locator_type)
+        try:
+            result = WebDriverWait(
+                self.driver,
+                timeout if timeout is not None else self.timeout,
+                poll_frequency=self.poll_frequency,
+                ignored_exceptions=(
+                    NoSuchElementException,
+                    StaleElementReferenceException,
+                ),
+            ).until(
+                EC.invisibility_of_element_located(
+                    self.build_locator(locator, locator_type)
+                )
             )
-        )
-     except TimeoutException:
-        self.log.error(
-            "Element did not become invisible: %s (%s)",
-            locator,
-            locator_type,
-        )
-        return False
+
+            return bool(result)
+
+        except TimeoutException:
+            self.log.error(
+                "Element did not become invisible: %s (%s)",
+                locator,
+                locator_type,
+            )
+            return False

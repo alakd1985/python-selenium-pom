@@ -7,7 +7,6 @@ from utilities.test_data_utils import generate_unique_suffix
 @when("the user navigates to the PIM page")
 def navigate_to_pim(driver):
     pim = PIMPage(driver)
-
     assert pim.open_pim(), (
         "Unable to navigate to the PIM page"
     )
@@ -16,7 +15,6 @@ def navigate_to_pim(driver):
 @when("the user clicks the Add Employee button")
 def click_add_employee(driver):
     pim = PIMPage(driver)
-
     assert pim.click_add_button(), (
         "Unable to click the Add Employee button"
     )
