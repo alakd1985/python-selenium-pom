@@ -3,6 +3,7 @@ from __future__ import annotations
 import platform
 from pathlib import Path
 
+import allure
 import pytest
 
 from base.webdriver_factory import WebDriverFactory
@@ -189,7 +190,7 @@ def pytest_configure(config):
 # =============================================================
 
 
-@pytest.hookimpl(hookwrapper=True)
+@pytest.hookimpl(hookwrapper=True, tryfirst=True)
 def pytest_runtest_makereport(item, call):
     outcome = yield
     report = outcome.get_result()
@@ -197,44 +198,105 @@ def pytest_runtest_makereport(item, call):
     if report.when != "call" or not report.failed:
         return
 
-    web_driver = item.funcargs.get("driver")
+    print("\n>>> FAILURE HOOK EXECUTED")
+    print(f">>> Test: {item.name}")
 
-    if web_driver is None:
+    try:
+        driver = item._request.getfixturevalue("driver")
+    except Exception as exc:
+        print(f">>> Unable to get driver fixture: {exc}")
         return
 
-    test_name = item.name.replace("/", "_").replace(" ", "_")
-    screenshot_path = SCREENSHOT_DIR / f"{test_name}.png"
+    if driver is None:
+        print(">>> Driver is None")
+        return
 
+    print(">>> Driver successfully retrieved")
+
+    test_name = (
+        item.name
+        .replace("/", "_")
+        .replace(" ", "_")
+    )
+
+    screenshot_path = (
+        SCREENSHOT_DIR / f"{test_name}.png"
+    )
+
+    # =========================================================
     # Screenshot
+    # =========================================================
+
     try:
-        web_driver.save_screenshot(str(screenshot_path))
-        attach_screenshot(
-            str(screenshot_path),
-            name=f"Failure Screenshot - {item.name}",
-        )
-    except Exception as exc:
-        attach_text(
-            f"Unable to capture screenshot: {exc}",
-            "Screenshot Capture Error",
+        success = driver.save_screenshot(
+            str(screenshot_path)
         )
 
-    # Page source
-    try:
-        attach_page_source(
-            web_driver.page_source,
-            name=f"Page Source - {item.name}",
-        )
-    except Exception as exc:
-        attach_text(
-            f"Unable to capture page source: {exc}",
-            "Page Source Capture Error",
+        print(
+            f">>> Screenshot saved: {success}"
         )
 
-    # URL
-    try:
-        attach_text(
-            web_driver.current_url,
-            "Failure URL",
+        print(
+            f">>> Screenshot path: {screenshot_path}"
         )
-    except Exception:
-        pass
+
+        print(
+            f">>> Screenshot exists: "
+            f"{screenshot_path.exists()}"
+        )
+
+        if screenshot_path.exists():
+            allure.attach.file(
+                str(screenshot_path),
+                name="Failure Screenshot",
+                attachment_type=allure.attachment_type.PNG,
+            )
+
+            print(
+                ">>> Screenshot attached to Allure"
+            )
+
+    except Exception as exc:
+        print(
+            f">>> Screenshot error: {exc}"
+        )
+
+    # =========================================================
+    # Page Source
+    # =========================================================
+
+    try:
+        allure.attach(
+            driver.page_source,
+            name="Failure Page Source",
+            attachment_type=allure.attachment_type.HTML,
+        )
+
+        print(
+            ">>> Page source attached"
+        )
+
+    except Exception as exc:
+        print(
+            f">>> Page source error: {exc}"
+        )
+
+    # =========================================================
+    # Current URL
+    # =========================================================
+
+    try:
+        allure.attach(
+            driver.current_url,
+            name="Failure URL",
+            attachment_type=allure.attachment_type.TEXT,
+        )
+
+        print(
+            ">>> URL attached"
+        )
+
+    except Exception as exc:
+        print(
+            f">>> URL attachment error: {exc}"
+        )

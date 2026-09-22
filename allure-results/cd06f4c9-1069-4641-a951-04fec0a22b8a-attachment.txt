@@ -1,2 +1,0 @@
-[32mINFO    [0m LoginPage:login_page.py:182 Clicking login button.
-[32mINFO    [0m LoginPage:base_page.py:602 Clicked element: //button[@type='submit']

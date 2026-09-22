@@ -58,6 +58,7 @@ def save_employee(driver):
 @then("the employee should be added successfully")
 def verify_employee_added(driver):
     pim = PIMPage(driver)
+    # assert False, "Temporary Allure screenshot test"
 
     assert pim.verify_employee_saved(), (
         "Employee was not added successfully"

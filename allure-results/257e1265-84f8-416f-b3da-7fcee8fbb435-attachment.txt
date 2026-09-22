@@ -1,2 +1,0 @@
-[INFO] Starting Firefox WebDriver
-[SOFT ASSERT] Screenshot saved: screenshots/soft_assert_failure_20260823-233954.png

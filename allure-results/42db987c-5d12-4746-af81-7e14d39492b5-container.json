@@ -1,0 +1,1 @@
+{"uuid": "d7f54ff1-f740-4963-b6d6-038cc0edc654", "befores": [{"name": "pytestbdd_stepdef_then_the employee should be added successfully", "status": "passed", "start": 1790103282526, "stop": 1790103282526}], "afters": [{"name": "pytestbdd_stepdef_then_the employee should be added successfully::<lambda>", "start": 1790103282642}], "start": 1790103282526, "stop": 1790103282642}

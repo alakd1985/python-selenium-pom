@@ -1,0 +1,1 @@
+{"uuid": "87e669eb-221a-4b99-845f-7fb491b11e35", "befores": [{"name": "pytestbdd_stepdef_when_the user navigates to the PIM page", "status": "passed", "start": 1790103279332, "stop": 1790103279332}], "afters": [{"name": "pytestbdd_stepdef_when_the user navigates to the PIM page::<lambda>", "start": 1790103282643}], "start": 1790103279332, "stop": 1790103282643}
