@@ -1,0 +1,1 @@
+{"uuid": "9d93e774-958e-4e61-9140-946bbf88e96b", "befores": [{"name": "pytestbdd_stepdef_then_the leave should be assigned successfully", "status": "passed", "start": 1790180417570, "stop": 1790180417570}], "afters": [{"name": "pytestbdd_stepdef_then_the leave should be assigned successfully::<lambda>", "start": 1790180432999}], "start": 1790180417569, "stop": 1790180432999}

@@ -130,7 +130,7 @@ def driver(settings, base_url):
         window_height=settings.window_height,
     )
 
-    web_driver = factory.create_driver(base_url)
+    web_driver = factory.create_driver()
 
     yield web_driver
 

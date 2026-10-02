@@ -1,0 +1,3 @@
+[32mINFO    [0m selenium_framework:webdriver_factory.py:49 WebDriver created: browser=firefox headless=False
+[32mINFO    [0m selenium_framework:dropdown.py:156 Found 11 dropdown options for //label[normalize-space()='Leave Type']/ancestor::div[contains(@class,'oxd-input-group')]//div[contains(@class,'oxd-select-text-input')]
+[1m[31mERROR   [0m selenium_framework:assign_leave_page.py:481 Leave Type option not visible: US - Vacation

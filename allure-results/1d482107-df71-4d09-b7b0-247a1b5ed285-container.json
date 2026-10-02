@@ -1,0 +1,1 @@
+{"uuid": "d8de13a0-282b-49ec-956e-e04f8ba8cab6", "befores": [{"name": "pytestbdd_stepdef_when_the user logs in with valid credentials", "status": "passed", "start": 1790567626778, "stop": 1790567626778}], "afters": [{"name": "pytestbdd_stepdef_when_the user logs in with valid credentials::<lambda>", "start": 1790567643074}], "start": 1790567626778, "stop": 1790567643075}

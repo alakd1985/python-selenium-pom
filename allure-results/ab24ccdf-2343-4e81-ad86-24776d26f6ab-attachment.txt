@@ -1,0 +1,2 @@
+[32mINFO    [0m selenium_framework:webdriver_factory.py:49 WebDriver created: browser=firefox headless=False
+[1m[31mERROR   [0m selenium_framework:base_page.py:114 Element not clickable: //div[@role='option'][normalize-space()='John Doe'] (xpath)

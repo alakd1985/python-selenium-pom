@@ -1,0 +1,5 @@
+[32mINFO    [0m selenium_framework:webdriver_factory.py:49 WebDriver created: browser=firefox headless=False
+[32mINFO    [0m selenium_framework:dropdown.py:156 Found 11 dropdown options for //label[normalize-space()='Leave Type']/ancestor::div[contains(@class,'oxd-input-group')]//div[contains(@class,'oxd-select-text-input')]
+[1m[31mERROR   [0m selenium_framework:base_page.py:114 Element not clickable: //label[normalize-space()='Partial Days']/ancestor::div[contains(@class,'oxd-input-group')]//div[contains(@class,'oxd-select-text-input')] (xpath)
+[1m[31mERROR   [0m selenium_framework:dropdown.py:121 Unable to open dropdown: //label[normalize-space()='Partial Days']/ancestor::div[contains(@class,'oxd-input-group')]//div[contains(@class,'oxd-select-text-input')]
+[1m[31mERROR   [0m selenium_framework:base_page.py:114 Element not clickable: //div[@role='option'][normalize-space()='US - Vacation'] (xpath)

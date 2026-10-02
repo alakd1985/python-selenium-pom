@@ -18,6 +18,7 @@ class LoginPage(BasePage):
     def click_login_button(self) -> bool:
         return self.click(locator=self._login_button)
 
+
     def login(self, username: str, password: str) -> bool:
         return (
             self.enter_username(username)
