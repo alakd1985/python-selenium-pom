@@ -134,11 +134,13 @@ def driver(settings, base_url):
 
     yield web_driver
 
+    print(">>> CLOSING WEB DRIVER")
+
     try:
         web_driver.quit()
-    except Exception:
-        pass
-
+        print(">>> WEB DRIVER CLOSED")
+    except Exception as exc:
+        print(f">>> WEB DRIVER CLOSE FAILED: {exc}")
 
 # =============================================================
 # PYTEST CONFIGURATION
