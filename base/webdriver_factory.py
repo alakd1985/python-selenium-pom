@@ -54,10 +54,6 @@ class WebDriverFactory:
 
         return driver
 
-    # Backward-compatible method used by older framework code.
-    def getWebDriverInstance(self, base_url: str):
-        return self.create_driver(base_url)
-
     def _create_chrome(self):
         options = ChromeOptions()
         if self.headless:

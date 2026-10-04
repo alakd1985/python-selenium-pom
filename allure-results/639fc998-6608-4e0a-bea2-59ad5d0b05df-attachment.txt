@@ -1,3 +1,0 @@
-[32mINFO    [0m selenium_framework:webdriver_factory.py:49 WebDriver created: browser=firefox headless=False
-[1m[31mERROR   [0m selenium_framework:base_page.py:114 Element not clickable: //i[@class='oxd-icon bi-caret-up-fill oxd-select-text--arrow'] (xpath)
-[1m[31mERROR   [0m selenium_framework:dropdown.py:121 Unable to open dropdown: //i[@class='oxd-icon bi-caret-up-fill oxd-select-text--arrow']

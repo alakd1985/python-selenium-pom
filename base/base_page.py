@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import time
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import Optional
 
 import utilities.custom_logger as cl
 from selenium.common.exceptions import (
@@ -19,7 +19,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-Locator = Tuple[str, str]
+Locator = tuple[str, str]
 
 
 class BasePage:

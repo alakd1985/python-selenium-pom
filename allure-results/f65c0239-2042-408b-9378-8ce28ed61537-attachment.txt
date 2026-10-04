@@ -1,3 +1,0 @@
-[32mINFO    [0m selenium_framework:webdriver_factory.py:49 WebDriver created: browser=firefox headless=False
-[32mINFO    [0m selenium_framework:assign_leave_page.py:375 Assign Leave confirmation message: success
-successfully saved

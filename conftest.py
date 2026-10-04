@@ -8,13 +8,18 @@ import pytest
 
 from base.webdriver_factory import WebDriverFactory
 from configuration.config import load_settings
-from utilities.allure_helper import attach_page_source, attach_screenshot, attach_text
-from utilities.data_reader import DataReader
+
+from utilities.custom_logger import customLogger
+from utilities.allure_helper import (
+    attach_page_source,
+    attach_screenshot,
+)
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 REPORT_DIR = PROJECT_ROOT / "reports"
 SCREENSHOT_DIR = PROJECT_ROOT / "screenshots"
+log = customLogger()
 
 
 # =============================================================
@@ -110,9 +115,7 @@ def base_url(settings):
     return settings.base_url
 
 
-@pytest.fixture(scope="session")
-def data_reader():
-    return DataReader(PROJECT_ROOT / "test_data")
+
 
 
 # =============================================================
@@ -134,13 +137,11 @@ def driver(settings, base_url):
 
     yield web_driver
 
-    print(">>> CLOSING WEB DRIVER")
-
     try:
         web_driver.quit()
-        print(">>> WEB DRIVER CLOSED")
+        log.info("WebDriver closed successfully")
     except Exception as exc:
-        print(f">>> WEB DRIVER CLOSE FAILED: {exc}")
+        log.error("Failed to close WebDriver: %s", exc)
 
 # =============================================================
 # PYTEST CONFIGURATION
@@ -200,20 +201,17 @@ def pytest_runtest_makereport(item, call):
     if report.when != "call" or not report.failed:
         return
 
-    print("\n>>> FAILURE HOOK EXECUTED")
-    print(f">>> Test: {item.name}")
+    log.error("Test failed: %s", item.name)
 
     try:
         driver = item._request.getfixturevalue("driver")
     except Exception as exc:
-        print(f">>> Unable to get driver fixture: {exc}")
+        log.error("Unable to get driver fixture: %s", exc)
         return
 
     if driver is None:
-        print(">>> Driver is None")
+        log.error("Driver fixture returned None")
         return
-
-    print(">>> Driver successfully retrieved")
 
     test_name = (
         item.name
@@ -221,84 +219,46 @@ def pytest_runtest_makereport(item, call):
         .replace(" ", "_")
     )
 
-    screenshot_path = (
-        SCREENSHOT_DIR / f"{test_name}.png"
-    )
+    screenshot_path = SCREENSHOT_DIR / f"{test_name}.png"
 
-    # =========================================================
     # Screenshot
-    # =========================================================
-
     try:
-        success = driver.save_screenshot(
-            str(screenshot_path)
-        )
-
-        print(
-            f">>> Screenshot saved: {success}"
-        )
-
-        print(
-            f">>> Screenshot path: {screenshot_path}"
-        )
-
-        print(
-            f">>> Screenshot exists: "
-            f"{screenshot_path.exists()}"
-        )
-
-        if screenshot_path.exists():
-            allure.attach.file(
+        if driver.save_screenshot(str(screenshot_path)):
+            attach_screenshot(
                 str(screenshot_path),
                 name="Failure Screenshot",
-                attachment_type=allure.attachment_type.PNG,
             )
-
-            print(
-                ">>> Screenshot attached to Allure"
+            log.info(
+                "Failure screenshot attached: %s",
+                screenshot_path,
             )
-
     except Exception as exc:
-        print(
-            f">>> Screenshot error: {exc}"
-        )
+        log.error("Unable to capture failure screenshot: %s", exc)
 
-    # =========================================================
-    # Page Source
-    # =========================================================
-
+    # Page source
     try:
         allure.attach(
             driver.page_source,
             name="Failure Page Source",
             attachment_type=allure.attachment_type.HTML,
         )
-
-        print(
-            ">>> Page source attached"
-        )
-
+        log.info("Failure page source attached")
     except Exception as exc:
-        print(
-            f">>> Page source error: {exc}"
+        log.error(
+            "Unable to attach failure page source: %s",
+            exc,
         )
 
-    # =========================================================
     # Current URL
-    # =========================================================
-
     try:
         allure.attach(
             driver.current_url,
             name="Failure URL",
             attachment_type=allure.attachment_type.TEXT,
         )
-
-        print(
-            ">>> URL attached"
-        )
-
+        log.info("Failure URL attached")
     except Exception as exc:
-        print(
-            f">>> URL attachment error: {exc}"
+        log.error(
+            "Unable to attach failure URL: %s",
+            exc,
         )

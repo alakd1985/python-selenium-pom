@@ -1,1 +1,0 @@
-{"uuid": "9dd6f4dc-0d9f-40c8-a2e4-59afa84730ad", "befores": [{"name": "pytestbdd_stepdef_when_the user selects Cash on delivery", "status": "passed", "start": 1791059403353, "stop": 1791059403353}], "afters": [{"name": "pytestbdd_stepdef_when_the user selects Cash on delivery::<lambda>", "start": 1791059403484}], "start": 1791059403353, "stop": 1791059403484}

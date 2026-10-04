@@ -1,1 +1,0 @@
-{"uuid": "d417695f-daa7-451d-a175-6f5f08a4f614", "befores": [{"name": "pytestbdd_stepdef_then_the MediShop home page should be displayed", "status": "passed", "start": 1791058070187, "stop": 1791058070187}], "afters": [{"name": "pytestbdd_stepdef_then_the MediShop home page should be displayed::<lambda>", "start": 1791058073930}], "start": 1791058070187, "stop": 1791058073930}

@@ -1,0 +1,1 @@
+{"uuid": "5fa4fa1a-f1bf-490f-8546-4e91363b573c", "befores": [{"name": "pytestbdd_stepdef_when_the user searches for Aspirin", "status": "passed", "start": 1791071324603, "stop": 1791071324603}], "afters": [{"name": "pytestbdd_stepdef_when_the user searches for Aspirin::<lambda>", "start": 1791071326389}], "start": 1791071324603, "stop": 1791071326389}

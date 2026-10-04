@@ -15,30 +15,36 @@ except ImportError:  # pragma: no cover
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 ENVIRONMENTS_FILE = Path(__file__).resolve().parent / "environments.json"
 
+
 if load_dotenv:
     load_dotenv(PROJECT_ROOT / ".env")
-
-# Safe defaults for the OrangeHRM public demo environment.
-# Real environments should supply credentials through CI/CD secrets.
-os.environ.setdefault("ORANGEHRM_USERNAME", "Admin")
-os.environ.setdefault("ORANGEHRM_PASSWORD", "admin123")
 
 
 def _resolve_env(value):
     if isinstance(value, dict):
-        return {k: _resolve_env(v) for k, v in value.items()}
+        return {key: _resolve_env(item) for key, item in value.items()}
+
     if isinstance(value, list):
-        return [_resolve_env(v) for v in value]
+        return [_resolve_env(item) for item in value]
+
     if isinstance(value, str) and value.startswith("${") and value.endswith("}"):
         name = value[2:-1]
         return os.getenv(name, value)
+
     return value
 
 
 def _as_bool(value, default=False):
     if value is None:
         return default
-    return str(value).strip().lower() in {"1", "true", "yes", "y", "on"}
+
+    return str(value).strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "y",
+        "on",
+    }
 
 
 def _as_int(value, default):
@@ -85,20 +91,54 @@ def load_settings(environment: str | None = None) -> Settings:
 
     data = environments[env_name]
 
-    base_url = os.getenv("BASE_URL", data.get("base_url", "")).strip()
-    browser = os.getenv("BROWSER", data.get("browser", "firefox")).strip().lower()
-    timeout = _as_int(os.getenv("SELENIUM_TIMEOUT", data.get("timeout")), 10)
+    base_url = os.getenv(
+        "BASE_URL",
+        data.get("base_url", ""),
+    ).strip()
+
+    browser = os.getenv(
+        "BROWSER",
+        data.get("browser", "firefox"),
+    ).strip().lower()
+
+    timeout = _as_int(
+        os.getenv(
+            "SELENIUM_TIMEOUT",
+            data.get("timeout"),
+        ),
+        10,
+    )
+
     implicit_wait = _as_int(
-        os.getenv("SELENIUM_IMPLICIT_WAIT", data.get("implicit_wait")),
+        os.getenv(
+            "SELENIUM_IMPLICIT_WAIT",
+            data.get("implicit_wait"),
+        ),
         0,
     )
+
     headless = _as_bool(
-        os.getenv("HEADLESS", data.get("headless")),
+        os.getenv(
+            "HEADLESS",
+            data.get("headless"),
+        ),
         False,
     )
-    os_type = os.getenv("OS_TYPE", data.get("os_type", platform.system())).strip()
-    window_width = _as_int(data.get("window_width"), 1920)
-    window_height = _as_int(data.get("window_height"), 1080)
+
+    os_type = os.getenv(
+        "OS_TYPE",
+        data.get("os_type", platform.system()),
+    ).strip()
+
+    window_width = _as_int(
+        data.get("window_width"),
+        1920,
+    )
+
+    window_height = _as_int(
+        data.get("window_height"),
+        1080,
+    )
 
     if not base_url or base_url.startswith("${"):
         raise ValueError(
@@ -108,7 +148,8 @@ def load_settings(environment: str | None = None) -> Settings:
 
     if browser not in {"chrome", "firefox"}:
         raise ValueError(
-            f"Unsupported browser '{browser}'. Use chrome or firefox."
+            f"Unsupported browser '{browser}'. "
+            "Use chrome or firefox."
         )
 
     return Settings(
@@ -122,13 +163,3 @@ def load_settings(environment: str | None = None) -> Settings:
         window_width=window_width,
         window_height=window_height,
     )
-
-
-# Backward-compatible constants used by existing tests/code.
-DEFAULT_SETTINGS = load_settings()
-BASE_URL = DEFAULT_SETTINGS.base_url
-DEFAULT_BROWSER = DEFAULT_SETTINGS.browser
-DEFAULT_TIMEOUT = DEFAULT_SETTINGS.timeout
-HEADLESS = DEFAULT_SETTINGS.headless
-VALID_USERNAME = os.getenv("ORANGEHRM_USERNAME", "Admin")
-VALID_PASSWORD = os.getenv("ORANGEHRM_PASSWORD", "admin123")

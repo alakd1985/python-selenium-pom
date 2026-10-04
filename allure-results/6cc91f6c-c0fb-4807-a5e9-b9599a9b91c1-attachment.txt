@@ -1,2 +1,0 @@
-[32mINFO    [0m selenium_framework:webdriver_factory.py:49 WebDriver created: browser=firefox headless=False
-[31m[1mERROR   [0m selenium_framework:base_page.py:102 Element not visible: //div[contains(@class,'oxd-toast-content')] (xpath)

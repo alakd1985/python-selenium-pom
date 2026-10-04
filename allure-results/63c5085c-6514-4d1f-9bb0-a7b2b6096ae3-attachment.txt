@@ -1,9 +1,0 @@
-[32mINFO    [0m selenium_framework:webdriver_factory.py:49 WebDriver created: browser=firefox headless=False
-[1m[31mERROR   [0m selenium_framework:base_page.py:149 Unable to click .oxd-select-text-input: Message: Given xpath expression ".oxd-select-text-input" is invalid: SyntaxError: Document.evaluate: The expression is not a legal expression; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidselectorexception
-Stacktrace:
-RemoteError@chrome://remote/content/shared/RemoteError.sys.mjs:8:8
-WebDriverError@chrome://remote/content/shared/webdriver/Errors.sys.mjs:169:5
-InvalidSelectorError@chrome://remote/content/shared/webdriver/Errors.sys.mjs:422:5
-find_@chrome://remote/content/shared/DOM.sys.mjs:171:11
-
-[1m[31mERROR   [0m selenium_framework:dropdown.py:121 Unable to open dropdown: .oxd-select-text-input

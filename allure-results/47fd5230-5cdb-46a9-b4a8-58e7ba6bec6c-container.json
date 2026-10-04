@@ -1,1 +1,0 @@
-{"uuid": "55af1982-5e89-4d50-8539-17d99612aa01", "befores": [{"name": "pytestbdd_stepdef_when_the user clicks the Assign button", "status": "passed", "start": 1790180735284, "stop": 1790180735284}], "afters": [{"name": "pytestbdd_stepdef_when_the user clicks the Assign button::<lambda>", "start": 1790180735498}], "start": 1790180735284, "stop": 1790180735498}
