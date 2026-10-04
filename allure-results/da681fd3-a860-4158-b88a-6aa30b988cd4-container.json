@@ -1,0 +1,1 @@
+{"uuid": "1e76496c-cb87-4aeb-b062-79e4ba1adc73", "befores": [{"name": "pytestbdd_stepdef_when_the user leaves the city empty", "status": "passed", "start": 1791085237895, "stop": 1791085237895}], "afters": [{"name": "pytestbdd_stepdef_when_the user leaves the city empty::<lambda>", "start": 1791085238108}], "start": 1791085237895, "stop": 1791085238108}

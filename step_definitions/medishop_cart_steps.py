@@ -69,3 +69,61 @@ def verify_cart_empty(driver):
         "tag name",
         "body",
     ).text
+@when("the user increases the product quantity")
+def increase_product_quantity(driver):
+    shop_page = MediShopShopPage(driver)
+    assert shop_page.increase_product_quantity()
+
+
+@given("the user has two Aspirin in the shopping cart")
+def user_has_two_aspirin_in_cart(driver, base_url):
+    driver.get(base_url)
+
+    login_page = MediShopLoginPage(driver)
+
+    assert login_page.login(
+        DEMO_EMAIL,
+        DEMO_PASSWORD,
+    )
+
+    shop_page = MediShopShopPage(driver)
+
+    assert shop_page.search_medicine("Aspirin")
+    assert shop_page.add_to_cart()
+    assert shop_page.click_cart()
+    assert shop_page.increase_product_quantity()
+
+
+@when("the user decreases the product quantity")
+def decrease_product_quantity(driver):
+    shop_page = MediShopShopPage(driver)
+    assert shop_page.decrease_product_quantity()
+
+
+@then(parsers.parse('the product quantity should be "{quantity}"'))
+def verify_product_quantity(driver, quantity):
+    shop_page = MediShopShopPage(driver)
+
+    actual_quantity = shop_page.get_product_quantity()
+
+    assert actual_quantity == quantity, (
+        f"Expected quantity {quantity}, "
+        f"but found {actual_quantity}"
+    )
+
+
+@when("the user clears the shopping cart")
+def clear_shopping_cart(driver):
+    shop_page = MediShopShopPage(driver)
+    assert shop_page.clear_cart()
+
+
+@when("the user continues shopping")
+def continue_shopping(driver):
+    shop_page = MediShopShopPage(driver)
+    assert shop_page.continue_shopping()
+
+
+@then("the MediShop product page should be displayed")
+def verify_product_page_displayed(driver):
+    assert "products.html" in driver.current_url.lower()

@@ -1,0 +1,1 @@
+{"uuid": "f7fe01cd-f0f2-491d-aa2b-869d4ac0814c", "befores": [{"name": "pytestbdd_stepdef_when_the user leaves the pincode empty", "status": "passed", "start": 1791087030741, "stop": 1791087030741}], "afters": [{"name": "pytestbdd_stepdef_when_the user leaves the pincode empty::<lambda>", "start": 1791087030887}], "start": 1791087030741, "stop": 1791087030887}

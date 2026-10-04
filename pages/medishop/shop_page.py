@@ -6,7 +6,6 @@ from base.base_page import BasePage
 
 
 class MediShopShopPage(BasePage):
-
     _search_input = "//input[@id='header_search_input']"
 
     _add_to_cart_button = (
@@ -26,13 +25,29 @@ class MediShopShopPage(BasePage):
     _remove_product_button = (
         "//button[starts-with(@data-testid, 'remove_')]"
     )
+    _clear_cart_button = (
+        "//button[@data-testid='clear_cart_button']"
+    )
+
+    _increase_quantity_button = (
+        "//button[starts-with(@data-testid, 'increase_')]"
+    )
+
+    _decrease_quantity_button = (
+        "//button[starts-with(@data-testid, 'decrease_')]"
+    )
+
+    _continue_shopping_button = (
+        "//a[normalize-space()='Continue shopping']"
+    )
+
     def search_medicine(self, medicine: str) -> bool:
         try:
             if not self.send_keys(
-                locator=self._search_input,
-                text=medicine,
-                locator_type="xpath",
-                clear_first=True,
+                    locator=self._search_input,
+                    text=medicine,
+                    locator_type="xpath",
+                    clear_first=True,
             ):
                 return False
 
@@ -124,5 +139,58 @@ class MediShopShopPage(BasePage):
     def remove_product_from_cart(self) -> bool:
         return self.click(
             locator=self._remove_product_button,
+            locator_type="xpath",
+        )
+
+    def increase_product_quantity(self) -> bool:
+        return self.click(
+            locator=self._increase_quantity_button,
+            locator_type="xpath",
+        )
+
+    def decrease_product_quantity(self) -> bool:
+        return self.click(
+            locator=self._decrease_quantity_button,
+            locator_type="xpath",
+        )
+
+    def clear_cart(self) -> bool:
+        return self.click(
+            locator=self._clear_cart_button,
+            locator_type="xpath",
+        )
+
+    def continue_shopping(self) -> bool:
+        return self.click(
+            locator=self._continue_shopping_button,
+            locator_type="xpath",
+        )
+
+    def get_product_quantity(self) -> str | None:
+        try:
+            quantity_element = self.wait_for_element_visible(
+                locator="//button[starts-with(@data-testid, 'increase_')]/preceding-sibling::*[self::span or self::input]",
+                locator_type="xpath",
+                timeout=10,
+            )
+
+            if quantity_element is None:
+                return None
+
+            return (
+                    quantity_element.get_attribute("value")
+                    or quantity_element.text
+            ).strip()
+
+        except Exception as exc:
+            self.log.error(
+                "Unable to read product quantity: %s",
+                exc,
+            )
+            return None
+
+    def click_checkout(self) -> bool:
+        return self.click(
+            locator=self._cart_checkout_button,
             locator_type="xpath",
         )

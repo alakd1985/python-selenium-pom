@@ -165,3 +165,25 @@ class MediShopCheckoutPage(BasePage):
                 exc,
             )
             return False
+
+    def submit_checkout_form(self) -> bool:
+        return self.click_place_order()
+
+    def is_checkout_form_invalid(self) -> bool:
+        try:
+            page_text = self.driver.find_element(
+                "tag name",
+                "body",
+            ).text.lower()
+
+            return (
+                    "is required" in page_text
+                    or "please accept the terms" in page_text
+            )
+
+        except WebDriverException as exc:
+            self.log.error(
+                "Unable to verify checkout validation message: %s",
+                exc,
+            )
+            return False
