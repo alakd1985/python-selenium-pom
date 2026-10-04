@@ -12,7 +12,9 @@ class MediShopShopPage(BasePage):
     _add_to_cart_button = (
         "//button[normalize-space()='Add to cart']"
     )
-
+    _cart_product = (
+        "//*[contains(normalize-space(), 'Aspirin')]"
+    )
     _shopping_cart = (
         "//a[contains(@aria-label,'Shopping cart')]"
         "//*[name()='svg']"
@@ -21,7 +23,9 @@ class MediShopShopPage(BasePage):
     _cart_checkout_button = (
         "//button[@data-testid='cart_checkout_button']"
     )
-
+    _remove_product_button = (
+        "//button[starts-with(@data-testid, 'remove_')]"
+    )
     def search_medicine(self, medicine: str) -> bool:
         try:
             if not self.send_keys(
@@ -78,6 +82,32 @@ class MediShopShopPage(BasePage):
             )
             return False
 
+    def is_product_in_cart(self, product: str) -> bool:
+        try:
+            locator = (
+                f"//*[contains("
+                f"translate(normalize-space(), "
+                f"'ABCDEFGHIJKLMNOPQRSTUVWXYZ', "
+                f"'abcdefghijklmnopqrstuvwxyz'), "
+                f"'{product.lower()}')]"
+            )
+
+            element = self.wait_for_element_visible(
+                locator=locator,
+                locator_type="xpath",
+                timeout=10,
+            )
+
+            return element is not None
+
+        except WebDriverException as exc:
+            self.log.error(
+                "Unable to verify product '%s' in cart: %s",
+                product,
+                exc,
+            )
+            return False
+
     def click_secure_checkout(self) -> bool:
         try:
             return self.click(
@@ -90,3 +120,9 @@ class MediShopShopPage(BasePage):
                 exc,
             )
             return False
+
+    def remove_product_from_cart(self) -> bool:
+        return self.click(
+            locator=self._remove_product_button,
+            locator_type="xpath",
+        )

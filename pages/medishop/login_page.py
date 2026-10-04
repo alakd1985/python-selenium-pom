@@ -10,6 +10,8 @@ class MediShopLoginPage(BasePage):
     _email = "//input[@id='email_id']"
     _password = "//input[@id='password_id']"
     _sign_in_button = "//button[@id='signin_button']"
+    _account_menu_button = "//button[@data-testid='account_menu_button']"
+    _logout_button = "//button[@data-testid='logout_button']"
 
     def enter_email(self, email: str) -> bool:
         try:
@@ -53,3 +55,14 @@ class MediShopLoginPage(BasePage):
             return False
 
         return self.click_sign_in()
+
+    def logout(self) -> bool:
+        self.click(
+            locator=self._account_menu_button,
+            locator_type="xpath",
+        )
+
+        return self.click(
+            locator=self._logout_button,
+            locator_type="xpath",
+        )
