@@ -7,7 +7,9 @@
     "headless": false,
     "os_type": "local",
     "window_width": 1920,
-    "window_height": 1080
+    "window_height": 1080,
+    "username": "${MEDISHOP_USERNAME}",
+    "password": "${MEDISHOP_PASSWORD}"
   },
   "qa": {
     "base_url": "${QA_BASE_URL}",

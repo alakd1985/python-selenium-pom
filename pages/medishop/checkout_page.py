@@ -25,6 +25,23 @@ class MediShopCheckoutPage(BasePage):
     _place_order = (
         "//button[@type='submit'][normalize-space()='Place order'][1]"
     )
+    _terms_checkbox = (
+        "//span[contains(text(),"
+        "'I confirm the prescription details are accurate an')]"
+    )
+    _order_confirmation = (
+        "//h1[@data-testid='confirmation_heading']"
+    )
+    _order_id = "//strong[@class='mono']"
+
+    _payment_method = "//dd[@data-testid='confirmation_payment']"
+    _card_number = "//input[@id='card_number_input']"
+    _card_expiry = "//input[@id='card_expiry_input']"
+    _card_cvv = "//input[@id='card_cvv_input']"
+    _card_name = "//input[@id='card_name_input']"
+    _card_payment_method = (
+        "//span[normalize-space()='Secure gateway · Visa, Mastercard, Amex']"
+    )
 
     def enter_name(self, name: str) -> bool:
         try:
@@ -184,6 +201,150 @@ class MediShopCheckoutPage(BasePage):
         except WebDriverException as exc:
             self.log.error(
                 "Unable to verify checkout validation message: %s",
+                exc,
+            )
+            return False
+
+    def accept_terms_and_conditions(self) -> bool:
+        try:
+            return self.click(
+                locator=self._terms_checkbox,
+                locator_type="xpath",
+            )
+        except WebDriverException as exc:
+            self.log.error(
+                "Unable to accept terms and conditions: %s",
+                exc,
+            )
+            return False
+
+    def is_order_confirmed(self) -> bool:
+        try:
+            element = self.wait_for_element_visible(
+                locator=self._order_confirmation,
+                locator_type="xpath",
+                timeout=10,
+            )
+
+            if element is None:
+                return False
+
+            return element.text.strip() == "Order confirmed"
+
+        except WebDriverException as exc:
+            self.log.error(
+                "Unable to verify order confirmation: %s",
+                exc,
+            )
+            return False
+
+    def get_order_id(self) -> str | None:
+        try:
+            element = self.wait_for_element_visible(
+                locator=self._order_id,
+                locator_type="xpath",
+                timeout=10,
+            )
+            if element is None:
+                return None
+
+            return element.text.strip()
+
+        except WebDriverException as exc:
+            self.log.error(
+                "Unable to retrieve order ID: %s",
+                exc,
+            )
+            return None
+
+    def get_payment_method(self) -> str | None:
+        try:
+            element = self.wait_for_element_visible(
+                locator=self._payment_method,
+                locator_type="xpath",
+                timeout=10,
+            )
+            if element is None:
+                return None
+
+            return element.text.strip()
+
+        except WebDriverException as exc:
+            self.log.error(
+                "Unable to retrieve payment method: %s",
+                exc,
+            )
+            return None
+
+    def enter_card_number(self, card_number: str) -> bool:
+        try:
+            return self.send_keys(
+                locator=self._card_number,
+                text=card_number,
+                locator_type="xpath",
+                clear_first=True,
+            )
+        except WebDriverException as exc:
+            self.log.error(
+                "Unable to enter card number: %s",
+                exc,
+            )
+            return False
+
+    def enter_card_expiry(self, expiry: str) -> bool:
+        try:
+            return self.send_keys(
+                locator=self._card_expiry,
+                text=expiry,
+                locator_type="xpath",
+                clear_first=True,
+            )
+        except WebDriverException as exc:
+            self.log.error(
+                "Unable to enter card expiry: %s",
+                exc,
+            )
+            return False
+
+    def enter_card_cvv(self, cvv: str) -> bool:
+        try:
+            return self.send_keys(
+                locator=self._card_cvv,
+                text=cvv,
+                locator_type="xpath",
+                clear_first=True,
+            )
+        except WebDriverException as exc:
+            self.log.error(
+                "Unable to enter card CVV: %s",
+                exc,
+            )
+            return False
+
+    def enter_card_name(self, name: str) -> bool:
+        try:
+            return self.send_keys(
+                locator=self._card_name,
+                text=name,
+                locator_type="xpath",
+                clear_first=True,
+            )
+        except WebDriverException as exc:
+            self.log.error(
+                "Unable to enter card name: %s",
+                exc,
+            )
+            return False
+
+    def select_credit_card(self) -> bool:
+        try:
+            return self.click(
+                locator=self._card_payment_method,
+                locator_type="xpath",
+            )
+        except WebDriverException as exc:
+            self.log.error(
+                "Unable to select credit/debit card payment method: %s",
                 exc,
             )
             return False

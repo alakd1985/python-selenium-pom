@@ -9,16 +9,13 @@ DEMO_PASSWORD = "way2automation"
 
 
 @given("the user is logged into MediShop")
-def user_is_logged_into_medishop(driver, base_url):
-    driver.get(base_url)
-
+def user_is_logged_into_medishop(driver, settings):
+    driver.get(settings.base_url)
     login_page = MediShopLoginPage(driver)
-
     assert login_page.login(
-        DEMO_EMAIL,
-        DEMO_PASSWORD,
-    )
-
+        settings.username,
+        settings.password,
+    ), "MediShop login failed"
 
 @when(parsers.parse('the user searches for "{product}"'))
 def search_for_product(driver, product):

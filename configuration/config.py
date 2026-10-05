@@ -65,6 +65,8 @@ class Settings:
     os_type: str
     window_width: int
     window_height: int
+    username: str
+    password: str
 
 
 def load_settings(environment: str | None = None) -> Settings:
@@ -139,6 +141,15 @@ def load_settings(environment: str | None = None) -> Settings:
         data.get("window_height"),
         1080,
     )
+    username = os.getenv(
+        "MEDISHOP_USERNAME",
+        data.get("username", ""),
+    ).strip()
+
+    password = os.getenv(
+        "MEDISHOP_PASSWORD",
+        data.get("password", ""),
+    )
 
     if not base_url or base_url.startswith("${"):
         raise ValueError(
@@ -162,4 +173,6 @@ def load_settings(environment: str | None = None) -> Settings:
         os_type=os_type,
         window_width=window_width,
         window_height=window_height,
+        username=username,
+        password=password,
     )
