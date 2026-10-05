@@ -1,1 +1,0 @@
-{"uuid": "3595050e-492b-46d9-ae2d-4b039a780489", "befores": [{"name": "pytestbdd_stepdef_when_the user decreases the product quantity", "status": "passed", "start": 1791084144223, "stop": 1791084144223}], "afters": [{"name": "pytestbdd_stepdef_when_the user decreases the product quantity::<lambda>", "start": 1791084144293}], "start": 1791084144223, "stop": 1791084144293}

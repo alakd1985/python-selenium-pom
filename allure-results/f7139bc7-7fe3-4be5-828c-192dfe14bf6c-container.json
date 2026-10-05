@@ -1,1 +1,0 @@
-{"uuid": "77cd0468-b7ba-4afa-9b45-82a9a2e1984e", "children": ["83d26d8f-f1c9-40ff-b65a-d2dd0d38d185"], "befores": [{"name": "_pytest_bdd_example", "status": "passed", "start": 1791079324541, "stop": 1791079324541}], "afters": [{"name": "_pytest_bdd_example::<lambda>", "start": 1791079333128}], "start": 1791079324541, "stop": 1791079333128}

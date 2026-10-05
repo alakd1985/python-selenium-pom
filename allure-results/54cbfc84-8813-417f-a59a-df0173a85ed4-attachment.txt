@@ -1,3 +1,0 @@
-[32mINFO    [0m selenium_framework:webdriver_factory.py:49 WebDriver created: browser=firefox headless=False
-[32mINFO    [0m selenium_framework:checkout_page.py:114 Country selected successfully: United States
-[32mINFO    [0m selenium_framework:conftest.py:139 WebDriver closed successfully

@@ -1,1 +1,0 @@
-{"uuid": "7d003b3c-8659-499d-a673-24cb91d92bcb", "befores": [{"name": "pytestbdd_stepdef_when_the user leaves the mobile number empty", "status": "passed", "start": 1791085425393, "stop": 1791085425393}], "afters": [{"name": "pytestbdd_stepdef_when_the user leaves the mobile number empty::<lambda>", "start": 1791085425605}], "start": 1791085425393, "stop": 1791085425605}

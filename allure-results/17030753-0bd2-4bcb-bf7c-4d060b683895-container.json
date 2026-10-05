@@ -1,1 +1,0 @@
-{"uuid": "81ae1e50-e760-48b1-8b63-f890de1a9779", "befores": [{"name": "pytestbdd_stepdef_when_the user leaves the customer name empty", "status": "passed", "start": 1791086084762, "stop": 1791086084762}], "afters": [{"name": "pytestbdd_stepdef_when_the user leaves the customer name empty::<lambda>", "start": 1791086084983}], "start": 1791086084762, "stop": 1791086084983}

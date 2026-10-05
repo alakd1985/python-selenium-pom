@@ -1,1 +1,0 @@
-{"uuid": "3ee9dd95-2a37-43da-a2f1-666483ef834b", "befores": [{"name": "pytestbdd_stepdef_given_the user is logged into MediShop", "status": "passed", "start": 1791087004286, "stop": 1791087004286}], "afters": [{"name": "pytestbdd_stepdef_given_the user is logged into MediShop::<lambda>", "start": 1791087013201}], "start": 1791087004286, "stop": 1791087013201}

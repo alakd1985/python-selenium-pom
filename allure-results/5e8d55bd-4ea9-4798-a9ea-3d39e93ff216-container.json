@@ -1,1 +1,0 @@
-{"uuid": "68978838-7844-4191-a706-17a5e9a07dd1", "befores": [{"name": "pytestbdd_stepdef_when_the user leaves the house address empty", "status": "passed", "start": 1791085434330, "stop": 1791085434331}], "afters": [{"name": "pytestbdd_stepdef_when_the user leaves the house address empty::<lambda>", "start": 1791085434543}], "start": 1791085434330, "stop": 1791085434543}
