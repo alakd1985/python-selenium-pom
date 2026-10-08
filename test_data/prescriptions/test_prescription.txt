@@ -1,0 +1,5 @@
+Patient: Rahul Arora
+Medication: Salbutamol Inhaler 100mcg
+Prescribing Doctor: Dr. Meera Kapoor
+Prescription Date: 10/06/2026
+Quantity: 1

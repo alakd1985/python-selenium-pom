@@ -5,6 +5,7 @@ from selenium.common.exceptions import WebDriverException
 from base.base_page import BasePage
 
 
+
 class MediShopShopPage(BasePage):
     _search_input = "//input[@id='header_search_input']"
 
@@ -14,11 +15,14 @@ class MediShopShopPage(BasePage):
     _cart_product = (
         "//*[contains(normalize-space(), 'Aspirin')]"
     )
+    # _shopping_cart = (
+    #     "//a[contains(@aria-label,'Shopping cart')]"
+    #     "//*[name()='svg']"
+    # )
+
     _shopping_cart = (
         "//a[contains(@aria-label,'Shopping cart')]"
-        "//*[name()='svg']"
     )
-
     _cart_checkout_button = (
         "//button[@data-testid='cart_checkout_button']"
     )
@@ -39,6 +43,16 @@ class MediShopShopPage(BasePage):
 
     _continue_shopping_button = (
         "//a[normalize-space()='Continue shopping']"
+    )
+    _prescription_only = (
+        "//span[normalize-space()='Prescription only']"
+    )
+
+    _salbutamol_add_to_cart = (
+        "//article[1]//div[3]//button[1]"
+    )
+    _browse_medicines_button = (
+        "//a[@class='btn btn-primary btn-lg']"
     )
 
     def search_medicine(self, medicine: str) -> bool:
@@ -86,10 +100,23 @@ class MediShopShopPage(BasePage):
 
     def click_cart(self) -> bool:
         try:
-            return self.click(
+            element = self.wait_for_element_visible(
                 locator=self._shopping_cart,
                 locator_type="xpath",
             )
+
+            self.driver.execute_script(
+                "arguments[0].scrollIntoView({block: 'center'});",
+                element,
+            )
+
+            self.driver.execute_script(
+                "arguments[0].click();",
+                element,
+            )
+
+            return True
+
         except WebDriverException as exc:
             self.log.error(
                 "Unable to click shopping cart: %s",
@@ -192,5 +219,37 @@ class MediShopShopPage(BasePage):
     def click_checkout(self) -> bool:
         return self.click(
             locator=self._cart_checkout_button,
+            locator_type="xpath",
+        )
+
+    def select_prescription_only(self) -> bool:
+        try:
+            return self.click(
+                locator=self._prescription_only,
+                locator_type="xpath",
+            )
+        except WebDriverException as exc:
+            self.log.error(
+                "Unable to select Prescription only filter: %s",
+                exc,
+            )
+            return False
+
+    def add_salbutamol_to_cart(self) -> bool:
+        try:
+            return self.click(
+                locator=self._salbutamol_add_to_cart,
+                locator_type="xpath",
+            )
+        except WebDriverException as exc:
+            self.log.error(
+                "Unable to add Salbutamol to cart: %s",
+                exc,
+            )
+            return False
+
+    def click_browse_medicines(self) -> bool:
+        return self.click(
+            locator=self._browse_medicines_button,
             locator_type="xpath",
         )
