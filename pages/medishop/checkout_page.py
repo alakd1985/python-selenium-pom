@@ -25,10 +25,7 @@ class MediShopCheckoutPage(BasePage):
     _place_order = (
         "//button[@type='submit'][normalize-space()='Place order'][1]"
     )
-    _terms_checkbox = (
-        "//span[contains(text(),"
-        "'I confirm the prescription details are accurate an')]"
-    )
+    _terms_checkbox = "//input[@id='terms_checkbox']"
     _order_confirmation = (
         "//h1[@data-testid='confirmation_heading']"
     )
