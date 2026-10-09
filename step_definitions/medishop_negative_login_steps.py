@@ -1,4 +1,4 @@
-from pytest_bdd import given, when, then
+from pytest_bdd import given, then, when
 
 from pages.medishop.login_page import MediShopLoginPage
 

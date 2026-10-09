@@ -3,9 +3,7 @@ from __future__ import annotations
 import logging
 import time
 from pathlib import Path
-from typing import Optional
 
-import utilities.custom_logger as cl
 from selenium.common.exceptions import (
     ElementClickInterceptedException,
     ElementNotInteractableException,
@@ -18,6 +16,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+
+import utilities.custom_logger as cl
 
 Locator = tuple[str, str]
 
@@ -70,7 +70,7 @@ class BasePage:
             raise ValueError("locator cannot be empty.")
         return self.get_by_type(locator_type), locator
 
-    def _wait(self, condition, timeout: Optional[int] = None):
+    def _wait(self, condition, timeout: int | None = None):
         return WebDriverWait(
             self.driver,
             timeout if timeout is not None else self.timeout,
@@ -79,8 +79,8 @@ class BasePage:
         ).until(condition)
 
     def wait_for_element_present(
-            self, locator: str, locator_type: str = "xpath", timeout: Optional[int] = None
-    ) -> Optional[WebElement]:
+            self, locator: str, locator_type: str = "xpath", timeout: int | None = None
+    ) -> WebElement | None:
         try:
             return self._wait(
                 EC.presence_of_element_located(self.build_locator(locator, locator_type)),
@@ -91,8 +91,8 @@ class BasePage:
             return None
 
     def wait_for_element_visible(
-            self, locator: str, locator_type: str = "xpath", timeout: Optional[int] = None
-    ) -> Optional[WebElement]:
+            self, locator: str, locator_type: str = "xpath", timeout: int | None = None
+    ) -> WebElement | None:
         try:
             return self._wait(
                 EC.visibility_of_element_located(self.build_locator(locator, locator_type)),
@@ -103,8 +103,8 @@ class BasePage:
             return None
 
     def wait_for_element_clickable(
-            self, locator: str, locator_type: str = "xpath", timeout: Optional[int] = None
-    ) -> Optional[WebElement]:
+            self, locator: str, locator_type: str = "xpath", timeout: int | None = None
+    ) -> WebElement | None:
         try:
             return self._wait(
                 EC.element_to_be_clickable(self.build_locator(locator, locator_type)),
@@ -115,8 +115,8 @@ class BasePage:
             return None
 
     def get_element(
-            self, locator: str, locator_type: str = "xpath", timeout: Optional[int] = None
-    ) -> Optional[WebElement]:
+            self, locator: str, locator_type: str = "xpath", timeout: int | None = None
+    ) -> WebElement | None:
         return self.wait_for_element_visible(locator, locator_type, timeout)
 
     def get_elements(self, locator: str, locator_type: str = "xpath") -> list[WebElement]:
@@ -129,10 +129,10 @@ class BasePage:
 
     def click(
             self,
-            locator: Optional[str] = None,
+            locator: str | None = None,
             locator_type: str = "xpath",
-            element: Optional[WebElement] = None,
-            timeout: Optional[int] = None,
+            element: WebElement | None = None,
+            timeout: int | None = None,
     ) -> bool:
         try:
             target = element or self.wait_for_element_clickable(locator, locator_type, timeout)
@@ -152,11 +152,11 @@ class BasePage:
     def send_keys(
             self,
             text: str,
-            locator: Optional[str] = None,
+            locator: str | None = None,
             locator_type: str = "xpath",
-            element: Optional[WebElement] = None,
+            element: WebElement | None = None,
             clear_first: bool = True,
-            timeout: Optional[int] = None,
+            timeout: int | None = None,
     ) -> bool:
         try:
             target = element or self.wait_for_element_visible(locator, locator_type, timeout)
@@ -183,11 +183,11 @@ class BasePage:
 
     def get_text(
             self,
-            locator: Optional[str] = None,
+            locator: str | None = None,
             locator_type: str = "xpath",
-            element: Optional[WebElement] = None,
-            timeout: Optional[int] = None,
-    ) -> Optional[str]:
+            element: WebElement | None = None,
+            timeout: int | None = None,
+    ) -> str | None:
         try:
             target = element or self.get_element(locator, locator_type, timeout)
             if target is None:
@@ -200,15 +200,15 @@ class BasePage:
 
     def get_attribute(
             self, locator: str, attribute: str, locator_type: str = "xpath"
-    ) -> Optional[str]:
+    ) -> str | None:
         element = self.get_element(locator, locator_type)
         return element.get_attribute(attribute) if element else None
 
     def is_element_present(
             self,
-            locator: Optional[str] = None,
+            locator: str | None = None,
             locator_type: str = "xpath",
-            element: Optional[WebElement] = None,
+            element: WebElement | None = None,
     ) -> bool:
         try:
             if element is not None:
@@ -222,9 +222,9 @@ class BasePage:
 
     def is_element_visible(
             self,
-            locator: Optional[str] = None,
+            locator: str | None = None,
             locator_type: str = "xpath",
-            element: Optional[WebElement] = None,
+            element: WebElement | None = None,
     ) -> bool:
         try:
             if element is not None:
@@ -240,7 +240,7 @@ class BasePage:
         return bool(element and element.is_enabled())
 
     def scroll_to_element(
-            self, locator: str, locator_type: str = "xpath", timeout: Optional[int] = None
+            self, locator: str, locator_type: str = "xpath", timeout: int | None = None
     ) -> bool:
         element = self.get_element(locator, locator_type, timeout)
         if element is None:
@@ -278,7 +278,7 @@ class BasePage:
     def get_current_url(self) -> str:
         return self.driver.current_url
 
-    def take_screenshot(self, name: str = "screenshot", directory: str = "screenshots") -> Optional[str]:
+    def take_screenshot(self, name: str = "screenshot", directory: str = "screenshots") -> str | None:
         try:
             folder = Path(directory)
             folder.mkdir(parents=True, exist_ok=True)
@@ -294,7 +294,7 @@ class BasePage:
             self,
             locator: str,
             locator_type: str = "xpath",
-            timeout: Optional[int] = None,
+            timeout: int | None = None,
     ) -> bool:
         try:
             result = WebDriverWait(

@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 
 from selenium import webdriver
+from selenium.common import WebDriverException
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
@@ -88,7 +89,7 @@ class WebDriverFactory:
                 self.window_width,
                 self.window_height,
             )
-        except Exception:
+        except WebDriverException:
             driver.maximize_window()
 
         driver.implicitly_wait(self.implicit_wait)

@@ -3,6 +3,7 @@ from __future__ import annotations
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+
 from base.base_page import BasePage
 
 

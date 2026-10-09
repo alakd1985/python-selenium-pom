@@ -5,7 +5,6 @@ from selenium.common.exceptions import WebDriverException
 from base.base_page import BasePage
 
 
-
 class MediShopShopPage(BasePage):
     _search_input = "//input[@id='header_search_input']"
 
@@ -209,7 +208,7 @@ class MediShopShopPage(BasePage):
                     or quantity_element.text
             ).strip()
 
-        except Exception as exc:
+        except WebDriverException as exc:
             self.log.error(
                 "Unable to read product quantity: %s",
                 exc,

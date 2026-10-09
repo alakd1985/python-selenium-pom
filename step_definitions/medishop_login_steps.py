@@ -1,6 +1,8 @@
-from pytest_bdd import given, when, then
-from pages.medishop.login_page import MediShopLoginPage
+from pytest_bdd import given, then, when
+
 from pages.medishop.home_page import MediShopHomePage
+from pages.medishop.login_page import MediShopLoginPage
+
 
 @given("the user is on the MediShop login page")
 def user_is_on_medishop_login_page(driver, settings):

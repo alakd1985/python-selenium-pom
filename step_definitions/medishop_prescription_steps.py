@@ -1,10 +1,10 @@
 from pathlib import Path
 
-from pytest_bdd import given, when, then
+from pytest_bdd import given, then, when
 
 from pages.medishop.login_page import MediShopLoginPage
-from pages.medishop.shop_page import MediShopShopPage
 from pages.medishop.prescription_page import MediShopPrescriptionPage
+from pages.medishop.shop_page import MediShopShopPage
 
 
 @given("the user is on the MediShop login page")

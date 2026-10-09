@@ -1,5 +1,5 @@
 
-from pytest_bdd import when, then
+from pytest_bdd import then, when
 
 
 @when("the user clicks Secure checkout")

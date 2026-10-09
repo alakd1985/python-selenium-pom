@@ -1,9 +1,8 @@
 import pytest
 
 from pages.medishop.checkout_page import MediShopCheckoutPage
-from pages.medishop.shop_page import MediShopShopPage
 from pages.medishop.prescription_page import MediShopPrescriptionPage
-
+from pages.medishop.shop_page import MediShopShopPage
 
 
 @pytest.fixture

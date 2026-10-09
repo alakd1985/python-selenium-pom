@@ -8,12 +8,10 @@ import pytest
 
 from base.webdriver_factory import WebDriverFactory
 from configuration.config import load_settings
-
-from utilities.custom_logger import customLogger
 from utilities.allure_helper import (
-    attach_page_source,
     attach_screenshot,
 )
+from utilities.custom_logger import customLogger
 
 pytest_plugins = [
     "step_definitions.medishop_login_steps",
@@ -151,7 +149,7 @@ def driver(settings, base_url):
     try:
         web_driver.quit()
         log.info("WebDriver closed successfully")
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         log.error("Failed to close WebDriver: %s", exc)
 
 # =============================================================
@@ -216,7 +214,7 @@ def pytest_runtest_makereport(item, call):
 
     try:
         driver = item._request.getfixturevalue("driver")
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         log.error("Unable to get driver fixture: %s", exc)
         return
 
@@ -243,7 +241,7 @@ def pytest_runtest_makereport(item, call):
                 "Failure screenshot attached: %s",
                 screenshot_path,
             )
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         log.error("Unable to capture failure screenshot: %s", exc)
 
     # Page source
@@ -254,7 +252,7 @@ def pytest_runtest_makereport(item, call):
             attachment_type=allure.attachment_type.HTML,
         )
         log.info("Failure page source attached")
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         log.error(
             "Unable to attach failure page source: %s",
             exc,
@@ -268,7 +266,7 @@ def pytest_runtest_makereport(item, call):
             attachment_type=allure.attachment_type.TEXT,
         )
         log.info("Failure URL attached")
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         log.error(
             "Unable to attach failure URL: %s",
             exc,
