@@ -32,5 +32,7 @@ jobs:
           python -m ruff check .
 
       - name: Run Selenium tests
+        env:
+          HEADLESS: "true"
         run: |
           pytest
