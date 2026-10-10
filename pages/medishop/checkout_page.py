@@ -39,6 +39,11 @@ class MediShopCheckoutPage(BasePage):
     _card_payment_method = (
         "//span[normalize-space()='Secure gateway · Visa, Mastercard, Amex']"
     )
+    _express_delivery = (
+        "//span[normalize-space()='Next working day before 1pm']"
+    )
+    _upi_payment_method = "//strong[normalize-space()='UPI app']"
+    _upi_id = "//input[@id='upi_id_input']"
 
     def enter_name(self, name: str) -> bool:
         try:
@@ -166,6 +171,25 @@ class MediShopCheckoutPage(BasePage):
                 exc,
             )
             return False
+    def select_express_delivery(self) -> bool:
+        return self.click(
+            locator=self._express_delivery,
+            locator_type="xpath",
+        )
+
+    def select_upi_payment(self) -> bool:
+        return self.click(
+            locator=self._upi_payment_method,
+            locator_type="xpath",
+        )
+
+    def enter_upi_id(self, upi_id: str) -> bool:
+        return self.send_keys(
+            locator=self._upi_id,
+            text=upi_id,
+            locator_type="xpath",
+            clear_first=True,
+        )
 
     def click_place_order(self) -> bool:
         try:

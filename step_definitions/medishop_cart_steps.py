@@ -126,3 +126,8 @@ def continue_shopping(driver):
 @then("the MediShop product page should be displayed")
 def verify_product_page_displayed(driver):
     assert "products.html" in driver.current_url.lower()
+
+@when("the user opens the shopping cart")
+def open_shopping_cart(driver):
+    shop_page = MediShopShopPage(driver)
+    assert shop_page.click_cart(), "Unable to open shopping cart"

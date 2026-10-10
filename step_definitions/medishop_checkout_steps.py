@@ -1,5 +1,4 @@
-
-from pytest_bdd import then, when
+from pytest_bdd import parsers, then, when
 
 
 @when("the user clicks Secure checkout")
@@ -8,9 +7,9 @@ def user_clicks_secure_checkout(shop_page):
         "Unable to click Secure checkout"
     )
 
+
 @when("the user enters the checkout delivery information")
 def user_enters_checkout_delivery_information(checkout_page):
-
     assert checkout_page.enter_name("Rahul Arora"), (
         "Unable to enter name"
     )
@@ -56,21 +55,27 @@ def user_clicks_place_order(checkout_page):
     assert checkout_page.click_place_order(), (
         "Unable to click Place order"
     )
+
+
 @when("the user accepts the terms and conditions")
 def user_accepts_terms_and_conditions(checkout_page):
-
     assert checkout_page.accept_terms_and_conditions(), (
         "Unable to accept terms and conditions"
     )
+
+
 @then("the order confirmation should be displayed")
 def order_confirmation_should_be_displayed(checkout_page):
     assert checkout_page.is_order_confirmed(), (
         "Order confirmation was not displayed"
     )
+
+
 @then("the order ID should be displayed")
 def order_id_should_be_displayed(checkout_page):
     order_id = checkout_page.get_order_id()
     assert order_id, "Order ID was not displayed"
+
 
 @then("the payment method should be Cash on Delivery")
 def payment_method_should_be_cash_on_delivery(checkout_page):
@@ -79,11 +84,14 @@ def payment_method_should_be_cash_on_delivery(checkout_page):
         f"Expected 'Cash on Delivery', "
         f"but found '{payment_method}'"
     )
+
+
 @when("the user selects Credit / debit card")
 def user_selects_credit_card(checkout_page):
     assert checkout_page.select_credit_card(), (
         "Unable to select Credit / debit card"
     )
+
 
 @when("the user enters the card number")
 def user_enters_card_number(checkout_page):
@@ -111,6 +119,8 @@ def user_enters_name_on_card(checkout_page):
     assert checkout_page.enter_card_name(
         "RAHUL ARORA"
     ), "Unable to enter name on card"
+
+
 @then("the payment method should be Credit / Debit Card")
 def payment_method_should_be_credit_card(checkout_page):
     payment_method = checkout_page.get_payment_method()
@@ -118,4 +128,25 @@ def payment_method_should_be_credit_card(checkout_page):
     assert payment_method == "Credit / Debit Card", (
         f"Expected 'Credit / Debit Card', "
         f"but found '{payment_method}'"
+    )
+
+
+@when("the user selects Express delivery")
+def user_selects_express_delivery(checkout_page):
+    assert checkout_page.select_express_delivery(), (
+        "Unable to select Express delivery"
+    )
+
+
+@when("the user selects UPI app")
+def user_selects_upi_payment(checkout_page):
+    assert checkout_page.select_upi_payment(), (
+        "Unable to select UPI payment"
+    )
+
+
+@when(parsers.parse('the user enters UPI ID "{upi_id}"'))
+def user_enters_upi_id(checkout_page, upi_id):
+    assert checkout_page.enter_upi_id(upi_id), (
+        "Unable to enter UPI ID"
     )
