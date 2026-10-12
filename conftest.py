@@ -23,6 +23,7 @@ pytest_plugins = [
     "step_definitions.medishop_checkout_validation_steps",
     "step_definitions.medishop_logout_steps",
     "step_definitions.medishop_prescription_steps",
+    "step_definitions.medishop_order_details_steps",
 ]
 
 PROJECT_ROOT = Path(__file__).resolve().parent
