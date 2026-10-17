@@ -1,2 +1,6 @@
+
 [lint]
 ignore = ["N999"]
+
+[lint.per-file-ignores]
+"tests/medishop/test_*_bdd.py" = ["F403", "F405"]

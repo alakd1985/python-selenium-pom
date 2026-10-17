@@ -1,0 +1,5 @@
+from pytest_bdd import scenarios
+
+import step_definitions.medishop_login_steps
+
+scenarios("../../feature/medishop/login.feature")

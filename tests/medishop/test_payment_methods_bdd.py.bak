@@ -1,0 +1,4 @@
+from pytest_bdd import scenarios
+import step_definitions.medishop_payment_methods_steps
+
+scenarios("../../feature/medishop/payment_methods.feature")
