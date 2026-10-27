@@ -2,6 +2,7 @@ from pathlib import Path
 
 from pytest_bdd import given, then, when
 
+from pages.medishop.checkout_page import MediShopCheckoutPage
 from pages.medishop.login_page import MediShopLoginPage
 from pages.medishop.prescription_page import MediShopPrescriptionPage
 from pages.medishop.shop_page import MediShopShopPage
@@ -25,8 +26,8 @@ def user_logs_in_with_valid_demo_credentials(driver, settings):
 @then("the MediShop home page should be displayed")
 def verify_medishop_home_page(driver):
     assert (
-        "MediShop" in driver.title
-        or "MediShop" in driver.page_source
+            "MediShop" in driver.title
+            or "MediShop" in driver.page_source
     )
 
 
@@ -95,13 +96,13 @@ def click_upload_first_prescription(driver):
 
 @when("the user uploads the test prescription")
 def upload_test_prescription(
-    prescription_page: MediShopPrescriptionPage,
+        prescription_page: MediShopPrescriptionPage,
 ):
     file_path = (
-        Path(__file__).resolve().parents[1]
-        / "test_data"
-        / "prescriptions"
-        / "test_prescription.txt"
+            Path(__file__).resolve().parents[1]
+            / "test_data"
+            / "prescriptions"
+            / "test_prescription.txt"
     )
 
     assert file_path.exists(), (
@@ -115,7 +116,7 @@ def upload_test_prescription(
 
 @when("the user accepts the prescription confirmation")
 def accept_prescription_confirmation(
-    prescription_page: MediShopPrescriptionPage,
+        prescription_page: MediShopPrescriptionPage,
 ):
     assert prescription_page.accept_prescription_consent(), (
         "Unable to accept prescription confirmation"
@@ -124,7 +125,7 @@ def accept_prescription_confirmation(
 
 @when("the user saves the prescription")
 def save_prescription(
-    prescription_page: MediShopPrescriptionPage,
+        prescription_page: MediShopPrescriptionPage,
 ):
     assert prescription_page.save_prescription(), (
         "Unable to save the prescription"
@@ -133,8 +134,64 @@ def save_prescription(
 
 @then("the prescription should be uploaded successfully")
 def verify_prescription_uploaded(
-    prescription_page: MediShopPrescriptionPage,
+        prescription_page: MediShopPrescriptionPage,
 ):
     assert prescription_page.is_prescription_uploaded(), (
         "Prescription was not uploaded successfully"
     )
+
+
+@then("prescription-required medicines should be displayed")
+def verify_prescription_medicines_displayed(driver):
+    shop_page = MediShopShopPage(driver)
+
+    assert shop_page.are_prescription_medicines_displayed(), (
+        "No prescription-required medicines were found."
+    )
+
+
+@then("Salbutamol should be present in the cart")
+def verify_salbutamol_in_cart(driver):
+    shop_page = MediShopShopPage(driver)
+    assert shop_page.is_product_in_cart("Salbutamol"), (
+        "Salbutamol was not found in the shopping cart."
+    )
+
+@then("the checkout page should be displayed")
+def verify_checkout_page_displayed(driver):
+    assert "checkout" in driver.current_url.casefold(), (
+        f"Expected checkout page, got: {driver.current_url}"
+    )
+
+
+
+@given("Salbutamol is in the shopping cart")
+def salbutamol_is_in_shopping_cart(driver):
+    click_browse_medicines(driver)
+    select_prescription_only(driver)
+    add_salbutamol_to_cart(driver)
+    click_shopping_cart(driver)
+
+
+@when("the user opens prescription-only medicines")
+def user_opens_prescription_only_medicines(driver):
+    click_browse_medicines(driver)
+    select_prescription_only(driver)
+
+
+@when("the user uploads a prescription successfully")
+def user_uploads_prescription_successfully(
+    driver,
+    prescription_page: MediShopPrescriptionPage,
+):
+    click_upload_prescription(driver)
+    click_upload_first_prescription(driver)
+    upload_test_prescription(prescription_page)
+    accept_prescription_confirmation(prescription_page)
+    save_prescription(prescription_page)
+
+@given("the user opens prescription-only medicines")
+def user_opens_prescription_only_medicines(driver):
+    click_browse_medicines(driver)
+    select_prescription_only(driver)
+

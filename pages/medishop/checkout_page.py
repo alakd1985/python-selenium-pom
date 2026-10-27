@@ -369,3 +369,24 @@ class MediShopCheckoutPage(BasePage):
                 exc,
             )
             return False
+
+    def enter_delivery_information(
+            self,
+            customer: dict[str, str],
+    ) -> bool:
+        """Fill checkout delivery fields from one test-data record."""
+        full_name = (
+            f"{customer['first_name']} {customer['last_name']}"
+        )
+
+        required_fields = (
+            self.enter_name(full_name),
+            self.enter_mobile(customer["phone"]),
+            self.enter_house(customer["address"]),
+            self.enter_city(customer["city"]),
+            self.enter_state(customer["state"]),
+            self.enter_pincode(customer["zip_code"]),
+            self.select_country("United States"),
+        )
+
+        return all(required_fields)

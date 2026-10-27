@@ -30,7 +30,7 @@ class MediShopPrescriptionPage(BasePage):
     )
 
     _uploaded_prescription = (
-        "//strong[starts-with(normalize-space(), 'data_attachments_')]"
+        "[data-testid='prescription_file_0']"
     )
 
     def click_upload_prescription(self) -> bool:
@@ -102,18 +102,16 @@ class MediShopPrescriptionPage(BasePage):
 
     def is_prescription_uploaded(self) -> bool:
         try:
-            wait = WebDriverWait(self.driver, 30)
-
-            wait.until(
-                EC.visibility_of_element_located(
-                    (
-                        self.get_by_type("xpath"),
-                        self._uploaded_prescription,
-                    )
-                )
+            element = self.wait_for_element_visible(
+                locator=self._uploaded_prescription,
+                locator_type="css",
+                timeout=10,
             )
 
-            return True
+            if element is None:
+                return False
+
+            return element.text.strip() == "test_prescription.txt"
 
         except WebDriverException as exc:
             self.log.error(
