@@ -9,7 +9,6 @@ import json
 from pathlib import Path
 from typing import Any
 
-
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 ORDER_DATA_FILE = PROJECT_ROOT / "test_data" / "medishop_orders.json"
 

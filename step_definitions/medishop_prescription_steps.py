@@ -2,7 +2,6 @@ from pathlib import Path
 
 from pytest_bdd import given, then, when
 
-from pages.medishop.checkout_page import MediShopCheckoutPage
 from pages.medishop.login_page import MediShopLoginPage
 from pages.medishop.prescription_page import MediShopPrescriptionPage
 from pages.medishop.shop_page import MediShopShopPage
@@ -173,12 +172,6 @@ def salbutamol_is_in_shopping_cart(driver):
     click_shopping_cart(driver)
 
 
-@when("the user opens prescription-only medicines")
-def user_opens_prescription_only_medicines(driver):
-    click_browse_medicines(driver)
-    select_prescription_only(driver)
-
-
 @when("the user uploads a prescription successfully")
 def user_uploads_prescription_successfully(
     driver,
@@ -189,9 +182,11 @@ def user_uploads_prescription_successfully(
     upload_test_prescription(prescription_page)
     accept_prescription_confirmation(prescription_page)
     save_prescription(prescription_page)
-
 @given("the user opens prescription-only medicines")
+@when("the user opens prescription-only medicines")
 def user_opens_prescription_only_medicines(driver):
     click_browse_medicines(driver)
     select_prescription_only(driver)
+
+
 
