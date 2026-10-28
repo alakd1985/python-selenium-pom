@@ -39,17 +39,6 @@ pipeline {
             }
         }
 
-        stage('Chrome tests') {
-            steps {
-                sh '''
-                    mkdir -p reports
-                    BROWSER=chrome HEADLESS=true \
-                    venv/bin/python -m pytest tests/medishop/ \
-                    --browser=chrome --headless \
-                    -v --junitxml=reports/chrome.xml
-                '''
-            }
-        }
 
         stage('Firefox tests') {
             steps {
@@ -62,6 +51,19 @@ pipeline {
                 '''
             }
         }
+
+        stage('Chrome tests') {
+            steps {
+                sh '''
+                    mkdir -p reports
+                    BROWSER=chrome HEADLESS=true \
+                    venv/bin/python -m pytest tests/medishop/ \
+                    --browser=chrome --headless \
+                    -v --junitxml=reports/chrome.xml
+                '''
+            }
+        }
+
     }
 
     post {
