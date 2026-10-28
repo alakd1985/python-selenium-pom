@@ -135,11 +135,67 @@ class BasePage:
             timeout: int | None = None,
     ) -> bool:
         try:
-            target = element or self.wait_for_element_clickable(locator, locator_type, timeout)
+            target = element or self.wait_for_element_clickable(
+                locator, locator_type, timeout
+            )
             if target is None:
                 return False
-            target.click()
-            return True
+
+            self.driver.execute_script(
+                """
+                arguments[0].scrollIntoView({
+                    block: 'center',
+                    inline: 'center',
+                    behavior: 'instant'
+                });
+                """,
+                target,
+            )
+
+            target = (
+                self.wait_for_element_clickable(
+                    locator, locator_type, timeout
+                )
+                if locator
+                else target
+            )
+            if target is None:
+                return False
+
+            try:
+                target.click()
+                return True
+            except ElementClickInterceptedException:
+                details = self.driver.execute_script(
+                    """
+                    const el = arguments[0];
+                    const r = el.getBoundingClientRect();
+                    const x = r.left + r.width / 2;
+                    const y = r.top + r.height / 2;
+                    const top = document.elementFromPoint(x, y);
+                    return {
+                        target: el.outerHTML.slice(0, 300),
+                        targetRect: {
+                            x: r.x, y: r.y,
+                            width: r.width, height: r.height
+                        },
+                        viewport: {
+                            width: window.innerWidth,
+                            height: window.innerHeight
+                        },
+                        elementAtCenter: top
+                            ? top.outerHTML.slice(0, 500)
+                            : null
+                    };
+                    """,
+                    target,
+                )
+                self.log.error(
+                    "Click intercepted. Target diagnostics: %s",
+                    details,
+                )
+                return False
+
         except (
                 ElementClickInterceptedException,
                 ElementNotInteractableException,

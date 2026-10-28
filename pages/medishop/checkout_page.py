@@ -18,9 +18,7 @@ class MediShopCheckoutPage(BasePage):
     _country = "//select[@id='checkout_country_select']"
     _delivery_notes = "//textarea[@id='checkout_notes_input']"
 
-    _cash_on_delivery = (
-        "//strong[normalize-space()='Cash on delivery']"
-    )
+    _cash_on_delivery = "//label[@for='payment_cod']"
 
     _place_order = (
         "//button[@type='submit'][normalize-space()='Place order'][1]"
@@ -36,13 +34,9 @@ class MediShopCheckoutPage(BasePage):
     _card_expiry = "//input[@id='card_expiry_input']"
     _card_cvv = "//input[@id='card_cvv_input']"
     _card_name = "//input[@id='card_name_input']"
-    _card_payment_method = (
-        "//span[normalize-space()='Secure gateway · Visa, Mastercard, Amex']"
-    )
-    _express_delivery = (
-        "//span[normalize-space()='Next working day before 1pm']"
-    )
-    _upi_payment_method = "//strong[normalize-space()='UPI app']"
+    _card_payment_method = "//label[@for='payment_card']"
+    _express_delivery = "//label[@for='shipping_express']"
+    _upi_payment_method = "//label[@for='payment_upi']"
     _upi_id = "//input[@id='upi_id_input']"
 
     def enter_name(self, name: str) -> bool:
