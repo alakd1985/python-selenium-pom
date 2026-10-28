@@ -22,8 +22,8 @@ pipeline {
         stage('Install dependencies') {
             steps {
                 sh '''
-                    python3 --version
-                    python3 -m venv venv
+                    /Library/Frameworks/Python.framework/Versions/3.11/bin/python3.11 --version
+                    /Library/Frameworks/Python.framework/Versions/3.11/bin/python3.11 -m venv venv
                     venv/bin/python -m pip install --upgrade pip
                     venv/bin/python -m pip install -r requirements.txt
                     venv/bin/python -m pip install ruff
