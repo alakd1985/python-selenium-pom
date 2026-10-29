@@ -37,7 +37,7 @@ pipeline {
                     venv/bin/python -m pip install -r requirements.txt
                     venv/bin/python -m pip install ruff
 
-                    rm -rf reports
+                    rm -rf reports allure-results
                     mkdir -p reports
                 '''
             }
@@ -52,11 +52,14 @@ pipeline {
         stage('Firefox tests') {
             steps {
                 sh '''
+                    set -eu
+
                     BROWSER=firefox HEADLESS=true \
                     venv/bin/python -m pytest tests/medishop/ \
                     --browser=firefox --headless \
                     -v -ra --color=yes \
-                    --junitxml=reports/firefox.xml
+                    --junitxml=reports/firefox.xml \
+                    --alluredir=allure-results --clean-alluredir
                 '''
             }
         }
@@ -68,6 +71,12 @@ pipeline {
                 allowEmptyResults: true,
                 testResults: 'reports/firefox.xml'
             )
+
+            allure([
+                includeProperties: false,
+                jdk: '',
+                results: [[path: 'allure-results']]
+            ])
         }
 
         success {
