@@ -37,6 +37,7 @@ pipeline {
                     venv/bin/python -m pip install -r requirements.txt
                     venv/bin/python -m pip install ruff
 
+                    rm -rf reports
                     mkdir -p reports
                 '''
             }
@@ -65,7 +66,7 @@ pipeline {
         always {
             junit(
                 allowEmptyResults: true,
-                testResults: 'reports/*.xml'
+                testResults: 'reports/firefox.xml'
             )
         }
 
