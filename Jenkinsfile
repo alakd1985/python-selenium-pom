@@ -10,6 +10,8 @@ pipeline {
     environment {
         HEADLESS = 'true'
         PYTHONUNBUFFERED = '1'
+        MEDISHOP_USERNAME = 'trainer@way2automation.com'
+        MEDISHOP_PASSWORD = 'way2automation'
     }
 
     stages {
