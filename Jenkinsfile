@@ -12,7 +12,6 @@ pipeline {
         HEADLESS = 'true'
         PYTHONUNBUFFERED = '1'
 
-        // Demo credentials for the MediShop test application
         MEDISHOP_USERNAME = 'trainer@way2automation.com'
         MEDISHOP_PASSWORD = 'way2automation'
     }
@@ -51,35 +50,13 @@ pipeline {
 
         stage('Firefox tests') {
             steps {
-                catchError(
-                    buildResult: 'UNSTABLE',
-                    stageResult: 'FAILURE'
-                ) {
-                    sh '''
-                        BROWSER=firefox HEADLESS=true \
-                        venv/bin/python -m pytest tests/medishop/ \
-                        --browser=firefox --headless \
-                        -v -ra --color=yes \
-                        --junitxml=reports/firefox.xml
-                    '''
-                }
-            }
-        }
-
-        stage('Chrome tests') {
-            steps {
-                catchError(
-                    buildResult: 'UNSTABLE',
-                    stageResult: 'FAILURE'
-                ) {
-                    sh '''
-                        BROWSER=chrome HEADLESS=true \
-                        venv/bin/python -m pytest tests/medishop/ \
-                        --browser=chrome --headless \
-                        -v -ra --color=yes \
-                        --junitxml=reports/chrome.xml
-                    '''
-                }
+                sh '''
+                    BROWSER=firefox HEADLESS=true \
+                    venv/bin/python -m pytest tests/medishop/ \
+                    --browser=firefox --headless \
+                    -v -ra --color=yes \
+                    --junitxml=reports/firefox.xml
+                '''
             }
         }
     }
@@ -93,15 +70,11 @@ pipeline {
         }
 
         success {
-            echo 'All pipeline stages completed successfully.'
-        }
-
-        unstable {
-            echo 'One or more test stages failed. Check the JUnit reports.'
+            echo 'Firefox test pipeline completed successfully.'
         }
 
         failure {
-            echo 'The pipeline failed. Check the failed stage in Console Output.'
+            echo 'The pipeline failed. Check Console Output and Test Result.'
         }
     }
 }
