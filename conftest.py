@@ -203,6 +203,10 @@ def pytest_configure(config):
 # =============================================================
 
 
+# =============================================================
+# FAILURE ARTIFACTS
+# =============================================================
+
 @pytest.hookimpl(hookwrapper=True, tryfirst=True)
 def pytest_runtest_makereport(item, call):
     outcome = yield
@@ -213,14 +217,11 @@ def pytest_runtest_makereport(item, call):
 
     log.error("Test failed: %s", item.name)
 
-    try:
-        driver = item._request.getfixturevalue("driver")
-    except Exception as exc:  # noqa: BLE001
-        log.error("Unable to get driver fixture: %s", exc)
-        return
+    # Retrieve the existing WebDriver without creating a new one.
+    driver = item.funcargs.get("driver")
 
     if driver is None:
-        log.error("Driver fixture returned None")
+        log.info("No WebDriver available for this failed test")
         return
 
     test_name = (
@@ -231,7 +232,7 @@ def pytest_runtest_makereport(item, call):
 
     screenshot_path = SCREENSHOT_DIR / f"{test_name}.png"
 
-    # Screenshot
+    # Capture and attach screenshot.
     try:
         if driver.save_screenshot(str(screenshot_path)):
             attach_screenshot(
@@ -245,7 +246,7 @@ def pytest_runtest_makereport(item, call):
     except Exception as exc:  # noqa: BLE001
         log.error("Unable to capture failure screenshot: %s", exc)
 
-    # Page source
+    # Attach browser page source.
     try:
         allure.attach(
             driver.page_source,
@@ -254,12 +255,9 @@ def pytest_runtest_makereport(item, call):
         )
         log.info("Failure page source attached")
     except Exception as exc:  # noqa: BLE001
-        log.error(
-            "Unable to attach failure page source: %s",
-            exc,
-        )
+        log.error("Unable to attach failure page source: %s", exc)
 
-    # Current URL
+    # Attach current browser URL.
     try:
         allure.attach(
             driver.current_url,
@@ -268,7 +266,5 @@ def pytest_runtest_makereport(item, call):
         )
         log.info("Failure URL attached")
     except Exception as exc:  # noqa: BLE001
-        log.error(
-            "Unable to attach failure URL: %s",
-            exc,
-        )
+        log.error("Unable to attach failure URL: %s", exc)
+
